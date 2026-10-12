@@ -1,0 +1,13 @@
+{
+  "source_path": "/Users/andrebrumcortezferreira/Documents/PESSOAL/ps3recomp/docs/RECOMP_CONFIG.md",
+  "type": "DOC",
+  "confidence": "high",
+  "manifest_override": true,
+  "title": "RECOMP_CONFIG.md — schema TOML do recompilador (`tools/recomp_config.py`)",
+  "summary": "Reference for the recompiler's TOML config schema (main, midasm_hook, functions_override, invalid_instructions, optimizations) and its Python API.",
+  "scope": ["recomp_config.py", "TOML schema", "ppu_lifter.py", "midasm_hook", "functions_override", "invalid_instructions", "optimizations flags"],
+  "cross_refs": ["superpowers/plans/2026-07-23-xenonrecomp-lessons-recomp-tooling.md", "gow2-recomp/config/gow2_recomp.toml", "tools/ppu_lifter.py", "tools/test_invalid_instructions.py", "tools/test_recomp_config.py"],
+  "locked": false,
+  "precedence": null,
+  "notes": "MANIFEST_TYPE=DOC applied directly (manifest_override=true), skipping heuristic/content classification per instructions. Document is explicitly marked as a stub ('Stub — preenchido à medida que as fases do plano ... forem aterrando'); several sections (midasm_hook, functions_override) describe fields not yet consumed by the lifter. This is a technical config/schema reference, not an ADR/PRD/SPEC decision or requirements document."
+}

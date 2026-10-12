@@ -1,0 +1,13 @@
+{
+  "source_path": "/Users/andrebrumcortezferreira/Documents/PESSOAL/ps3recomp/docs/bringup/gow2/FASE1/attempt-1.md",
+  "type": "DOC",
+  "confidence": "high",
+  "manifest_override": true,
+  "title": "Checkpoint: Fase 1 — Re-medição do baseline pós-desmascaramento de memória",
+  "summary": "Bring-up checkpoint measuring GoW2 baseline after memory-masking task, diagnosing a mislinked binary causing missing trace output.",
+  "scope": ["GoW2 bring-up", "baseline measurement", "sys_memory", "ppu_loader trace instrumentation", "build_macos.sh engine linking"],
+  "cross_refs": ["docs/bringup/gow2/FASE0/baseline.json", "docs/bringup/gow2/FASE1/mascaras-e1-e2.md", "scripts/baseline_run.sh", "tools/trace_parse.py"],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

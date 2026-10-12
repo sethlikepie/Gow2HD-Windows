@@ -1,0 +1,13 @@
+{
+  "source_path": "/Users/andrebrumcortezferreira/Documents/PESSOAL/ps3recomp/docs/superpowers/specs/2026-07-25-fase1-desmascarar-memoria-design.md",
+  "type": "SPEC",
+  "confidence": "high",
+  "manifest_override": true,
+  "title": "Fase 1 (1º entregável) — Desmascarar a memória guest e corrigir o mapa de regiões",
+  "summary": "Design for the first deliverable of Phase 1: fixing vm_region_name to honestly report guest memory regions before allocator forensics.",
+  "scope": ["vm_region_name", "guest memory regions", "PS3_COMMIT_HIGH", "vm_base", "allocator", "BOOT_MEMORY_OK checkpoint"],
+  "cross_refs": ["../../IMPLEMENTATION_PLAN_GAME_RUNTIME_BRINGUP.md"],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

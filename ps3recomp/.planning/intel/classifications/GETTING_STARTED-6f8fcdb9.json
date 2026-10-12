@@ -1,0 +1,13 @@
+{
+  "source_path": "/Users/andrebrumcortezferreira/Documents/PESSOAL/ps3recomp/docs/GETTING_STARTED.md",
+  "type": "DOC",
+  "confidence": "high",
+  "manifest_override": true,
+  "title": "Getting Started with ps3recomp",
+  "summary": "Step-by-step setup and build guide for recompiling a PS3 game with ps3recomp.",
+  "scope": ["ps3recomp", "build setup", "prerequisites", "installation", "recompiler tools"],
+  "cross_refs": ["tools/decrypt_self.py", "tools/requirements.txt"],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

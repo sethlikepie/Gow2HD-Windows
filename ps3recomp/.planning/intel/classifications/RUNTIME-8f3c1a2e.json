@@ -1,0 +1,13 @@
+{
+  "source_path": "/Users/andrebrumcortezferreira/Documents/PESSOAL/ps3recomp/docs/RUNTIME.md",
+  "type": "DOC",
+  "confidence": "high",
+  "manifest_override": true,
+  "title": "ps3recomp Runtime Reference",
+  "summary": "Reference documentation for ps3recomp's core runtime layer: virtual memory, PPU/SPU contexts, type system, endianness, syscalls, and DMA engine.",
+  "scope": ["virtual memory manager", "PPU execution context", "SPU execution context", "type system", "endianness layer", "syscall dispatch", "DMA engine"],
+  "cross_refs": [],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

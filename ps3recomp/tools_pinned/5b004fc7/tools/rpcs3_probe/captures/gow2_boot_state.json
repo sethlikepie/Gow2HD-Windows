@@ -1,0 +1,315 @@
+{
+  "title": "/Users/andrebrumcortezferreira/Documents/PESSOAL/gow2-recomp/EBOOT.ELF",
+  "recipe": [
+    {
+      "op": "attach",
+      "label": "boot-attach",
+      "_note": "captures the already-stopped state RPCS3 hands us; the async-interrupt snapshot op does not work against RPCS3's stub"
+    },
+    {
+      "op": "mem",
+      "addr": "0x0053FCF0",
+      "len": 4,
+      "label": "toc-slot-1488"
+    },
+    {
+      "op": "mem",
+      "addr": "0x008691A8",
+      "len": 8,
+      "label": "wall-struct-+0-+4"
+    }
+  ],
+  "features": "PacketSize=1200",
+  "reg_layout": [
+    "r0",
+    "r1",
+    "r2",
+    "r3",
+    "r4",
+    "r5",
+    "r6",
+    "r7",
+    "r8",
+    "r9",
+    "r10",
+    "r11",
+    "r12",
+    "r13",
+    "r14",
+    "r15",
+    "r16",
+    "r17",
+    "r18",
+    "r19",
+    "r20",
+    "r21",
+    "r22",
+    "r23",
+    "r24",
+    "r25",
+    "r26",
+    "r27",
+    "r28",
+    "r29",
+    "r30",
+    "r31",
+    "f0",
+    "f1",
+    "f2",
+    "f3",
+    "f4",
+    "f5",
+    "f6",
+    "f7",
+    "f8",
+    "f9",
+    "f10",
+    "f11",
+    "f12",
+    "f13",
+    "f14",
+    "f15",
+    "f16",
+    "f17",
+    "f18",
+    "f19",
+    "f20",
+    "f21",
+    "f22",
+    "f23",
+    "f24",
+    "f25",
+    "f26",
+    "f27",
+    "f28",
+    "f29",
+    "f30",
+    "f31",
+    "pc",
+    "msr",
+    "cr",
+    "lr",
+    "ctr",
+    "xer",
+    "fpscr"
+  ],
+  "captures": [
+    {
+      "label": "boot-attach",
+      "pc": 2833640,
+      "regs": {
+        "r1": "0xD00204B0",
+        "r2": "0x00541178",
+        "r3": "0x00000000",
+        "r4": "0x330095A0",
+        "r13": "0x10007060",
+        "pc": "0x002B3CE8",
+        "lr": "0x002B3CDC",
+        "ctr": "0x009C5084"
+      },
+      "stack": [
+        "0x002B3CE8",
+        "0x002B3CDC",
+        "0x002B4690",
+        "0x002BFC00",
+        "0x002C0860",
+        "0x000CE08C",
+        "0x000CE0F4",
+        "0x000B71F8",
+        "0x002B2EC8",
+        "0x0025C894",
+        "0x000104DC",
+        "0x00010250"
+      ],
+      "stack_detail": [
+        {
+          "pc": 2833640,
+          "sp": 3489793200,
+          "via": "pc"
+        },
+        {
+          "pc": 2833628,
+          "sp": 3489793200,
+          "via": "lr-reg"
+        },
+        {
+          "pc": 2836112,
+          "sp": 3489793344,
+          "via": "lr-save"
+        },
+        {
+          "pc": 2882560,
+          "sp": 3489793488,
+          "via": "lr-save"
+        },
+        {
+          "pc": 2885728,
+          "sp": 3489793616,
+          "via": "lr-save"
+        },
+        {
+          "pc": 843916,
+          "sp": 3489794416,
+          "via": "lr-save"
+        },
+        {
+          "pc": 844020,
+          "sp": 3489794560,
+          "via": "lr-save"
+        },
+        {
+          "pc": 750072,
+          "sp": 3489794688,
+          "via": "lr-save"
+        },
+        {
+          "pc": 2830024,
+          "sp": 3489794960,
+          "via": "lr-save"
+        },
+        {
+          "pc": 2476180,
+          "sp": 3489795072,
+          "via": "lr-save"
+        },
+        {
+          "pc": 66780,
+          "sp": 3489795184,
+          "via": "lr-save"
+        },
+        {
+          "pc": 66128,
+          "sp": 3489795344,
+          "via": "lr-save"
+        }
+      ],
+      "disasm": [
+        {
+          "ea": "0x002B3CC8",
+          "mnemonic": "lwz",
+          "operands": "r9, 0x0(r31)",
+          "at_pc": false
+        },
+        {
+          "ea": "0x002B3CCC",
+          "mnemonic": "lbz",
+          "operands": "r0, 0x4(r9)",
+          "at_pc": false
+        },
+        {
+          "ea": "0x002B3CD0",
+          "mnemonic": "cmpwi",
+          "operands": "cr7, r0, 0",
+          "at_pc": false
+        },
+        {
+          "ea": "0x002B3CD4",
+          "mnemonic": "bne",
+          "operands": "cr7, 0x2B3CFC",
+          "at_pc": false
+        },
+        {
+          "ea": "0x002B3CD8",
+          "mnemonic": "bl",
+          "operands": "0x4B8F18",
+          "at_pc": false
+        },
+        {
+          "ea": "0x002B3CDC",
+          "mnemonic": "ld",
+          "operands": "r2, 0x28(r1)",
+          "at_pc": false
+        },
+        {
+          "ea": "0x002B3CE0",
+          "mnemonic": "li",
+          "operands": "r3, 500",
+          "at_pc": false
+        },
+        {
+          "ea": "0x002B3CE4",
+          "mnemonic": "li",
+          "operands": "r11, 141",
+          "at_pc": false
+        },
+        {
+          "ea": "0x002B3CE8",
+          "mnemonic": "sc",
+          "operands": "",
+          "at_pc": true
+        },
+        {
+          "ea": "0x002B3CEC",
+          "mnemonic": "lwz",
+          "operands": "r29, 0x0(r31)",
+          "at_pc": false
+        },
+        {
+          "ea": "0x002B3CF0",
+          "mnemonic": "lbz",
+          "operands": "r0, 0x4(r29)",
+          "at_pc": false
+        },
+        {
+          "ea": "0x002B3CF4",
+          "mnemonic": "cmpwi",
+          "operands": "cr7, r0, 0",
+          "at_pc": false
+        },
+        {
+          "ea": "0x002B3CF8",
+          "mnemonic": "beq",
+          "operands": "cr7, 0x2B3CD8",
+          "at_pc": false
+        },
+        {
+          "ea": "0x002B3CFC",
+          "mnemonic": "bl",
+          "operands": "0x2B2E50",
+          "at_pc": false
+        },
+        {
+          "ea": "0x002B3D00",
+          "mnemonic": "nop",
+          "operands": "",
+          "at_pc": false
+        },
+        {
+          "ea": "0x002B3D04",
+          "mnemonic": "ld",
+          "operands": "r0, 0xA0(r1)",
+          "at_pc": false
+        },
+        {
+          "ea": "0x002B3D08",
+          "mnemonic": "ld",
+          "operands": "r29, 0x78(r1)",
+          "at_pc": false
+        },
+        {
+          "ea": "0x002B3D0C",
+          "mnemonic": "ld",
+          "operands": "r31, 0x88(r1)",
+          "at_pc": false
+        }
+      ]
+    },
+    {
+      "label": "toc-slot-1488",
+      "addr": "0x0053FCF0",
+      "hex": "008691a8",
+      "u32_be": [
+        "0x008691A8"
+      ]
+    },
+    {
+      "label": "wall-struct-+0-+4",
+      "addr": "0x008691A8",
+      "hex": "0000000000000003",
+      "u32_be": [
+        "0x00000000",
+        "0x00000003"
+      ]
+    }
+  ]
+}

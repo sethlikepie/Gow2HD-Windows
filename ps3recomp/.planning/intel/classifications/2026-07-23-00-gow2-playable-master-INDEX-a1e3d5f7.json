@@ -1,0 +1,35 @@
+{
+  "source_path": "/Users/andrebrumcortezferreira/Documents/PESSOAL/ps3recomp/docs/superpowers/plans/2026-07-23-00-gow2-playable-master-INDEX.md",
+  "type": "PRD",
+  "confidence": "high",
+  "manifest_override": true,
+  "title": "GoW2 Playable — Master Implementation Plan (INDEX 2026-07-23)",
+  "summary": "Master roadmap defining tracks (M/S/G/U/T/P) and dual-gate acceptance criteria to reach a playable GoW2 static recompilation.",
+  "scope": [
+    "Track M: menu/post-thr frame loop (critical path)",
+    "Track S: shaders natural + guest draw",
+    "Track G: Metal content stack (M2-M10)",
+    "Track U: SPU jobs deep + residual ISA",
+    "Track T: Xenon-style recomp tooling",
+    "Track P: playable polish (input/save)",
+    "Gate B (thr path) and Gate A (post-thr life) acceptance",
+    "TYPE15 f4 writers / product work",
+    "theater blacklist / acceptance discipline"
+  ],
+  "cross_refs": [
+    "2026-07-23-menu-type15-frame-loop.md",
+    "2026-07-21-shader-registry-typemap-walk.md",
+    "2026-07-20-05-rsx-shaders-pixels.md",
+    "2026-07-21-00-macos-metal-stack-INDEX.md",
+    "2026-07-20-03-spu-jobs-protocol.md",
+    "2026-07-23-xenonrecomp-lessons-recomp-tooling.md",
+    "2026-07-23-m3plus-postwad-present.md",
+    "gow2-recomp/notes/2026-07-23-gate-a-verdict.md",
+    "gow2-recomp/notes/2026-07-23-r12-postthr-spin.md",
+    "gow2-recomp/notes/2026-07-23-r11-opd-sched.md",
+    "gow2-recomp/rodar_gow2_menu_fast.sh"
+  ],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

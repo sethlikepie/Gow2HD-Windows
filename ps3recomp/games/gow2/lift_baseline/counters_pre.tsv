@@ -1,0 +1,171 @@
+# Baseline forense do RDY-0 -- contadores do boot de referencia
+# Medido em 2026-07-25 contra boot_gow2 md5 72fa17c3900f5ef3c36049032c50e01a
+# (copia preservada em boot_gow2.rdy0_ref, gitignored).
+#
+# ATENCAO: este binario NAO foi construido a partir do branch macos-arm64-port-f0-f2.
+# O ppu_loader.o referencia _ps3_checkpoint_fire e _ps3_mem_oob_report, que so
+# existem na worktree ../ps3recomp-bringup. Enquanto o passo 6 da Task 1 nao
+# fixar o engine root e regravar, estes numeros descrevem um binario de safra
+# mista (lift 23 jul, runtime 24 jul, engine de outra worktree).
+#
+# Recipe: braco M0 -- PS3_NO_RSX=1 PS3_PERF_FSM=1 PS3_MOVIE_EOS=0, PS3_TRACE_* limpos,
+# PS3_MOVIE_DONE_MS e PS3_VDEC_FORCE_SEQDONE_MS por definir, 25 s, kill por PID.
+#
+# metrica	valor	tipo	nota
+st620_max_run1	11	obs	>=3
+st620_max_run2	11	obs	>=3
+st620_max_run3	1	obs	preso em 1
+st620_max_run4	11	obs	>=3
+st620_max_run5	11	obs	>=3
+st620_max_run6	1	obs	preso em 1
+st620_runs_ok	4	gate	de 6 -- no limite do criterio 4-de-6
+swap_used_mb	6616	ambiente	ACIMA do limiar ~4000M documentado; explica os 2 runs presos em 1
+boot_lifted_functions	56223	gate	linha [boot] N lifted functions registered
+lift_function_table_count	56072	gate	const em ppu_recomp_030.cpp -- numero DIFERENTE do de cima
+imp_modules	13	gate	linha [imp]
+imp_imports	151	gate	linha [imp]
+orfaos_pos_run	0	gate	pgrep -f boot_gow2 | wc -l
+lift_chunks	31	estrutura	o lifter actual produz 7 -- gate nunca por indice de chunk
+lift_injected_lines	1662	estrutura	000=704 001=910 002=20 003=16 004/005/006=4
+manifest_markers	244	gate	verify_lift_baseline.sh; 98 TAG + 71 SYM + 75 GLOBAL
+#
+# NAO observavel nesta recipe (nao usar como gate M0):
+# R_PermA bytes_read/size -- 0 ocorrencias no log M0; so aparece na recipe
+# menu-fast (FORCE_SEQDONE + AUTO_LOAD), que e' outra recipe e outro baseline.
+#
+# === BASELINE 2 (2026-07-25, apos merge origin + rebuild da lib) ===
+# Engine root FIXADO: ps3recomp @ d039469 (merge que trouxe runtime/trace/, onde
+# vivem ps3_checkpoint_fire e ps3_mem_oob_report). Exigiu reconstruir o
+# libps3recomp_runtime.a -- o de 24 jul nao os tinha e o link falhava.
+# boot_gow2 md5 d0f32f9e7b741f2c741146507857bb44
+#
+# ATENCAO -- ESTE BUILD DEPENDE DE CODIGO NAO-COMMITADO. Ver adenda no
+# 2026-07-25-baseline-depende-de-wip.md: o lift chama movie_done_timebased_reset,
+# que so' existe no movie_eos_arm.c por committar de outra sessao. Um build a
+# partir de HEAD NAO LINKA.
+#
+st620_max_run1_b2	11	obs	>=3
+st620_max_run2_b2	11	obs	>=3
+st620_max_run3_b2	11	obs	>=3
+st620_max_run4_b2	11	obs	>=3
+st620_max_run5_b2	11	obs	>=3
+st620_max_run6_b2	11	obs	>=3
+st620_runs_ok_b2	6	gate	6 de 6 (o baseline 1 deu 4/6, com 6616M de swap)
+swap_used_mb_b2	5911	ambiente	abaixo do limiar ~4000M? nao, mas melhor que o b1
+boot_lifted_functions_b2	56223	gate	inalterado
+imp_modules_b2	13	gate	inalterado
+imp_imports_b2	151	gate	inalterado
+orfaos_pos_run_b2	0	gate
+#
+# === RELIFT V3 (2026-07-26) — 1o binario de um lift 100% REGENERADO ===
+# Cadeia inteira sem uma unica edicao manual no lift:
+#   ppu_lifter.py EBOOT.ELF --functions functions.json -o recomp_macos_v3 -j 4   (15s, 7 chunks)
+#   ./apply_all_patches.sh recomp_macos_v3   (converge em 2 passagens)
+#   OUT=./boot_gow2_v3 ./build_macos.sh recomp_macos_v3
+# Dois orfaos fechados para isto acontecer:
+#   - declaracoes da API host -> recomp_mid_v2/patch_zz_host_api_decls.py (gow2-recomp f9ec60f)
+#   - ppu_timebase_now, que o lifter emite e o runtime nao definia (ps3recomp e441f37)
+# Mesma recipe M0, mesmo ambiente e MESMO grep que o baseline 2 (corrigido: o formato do log
+# e' "[MOVIEFSM] st620 <de> -> <para>", nao "st620=N"; 4294967295 e' o sem-estado inicial).
+#
+st620_max_run1_v3	0	obs	REGRESSAO (baseline2: 11)
+st620_max_run2_v3	0	obs	REGRESSAO
+st620_max_run3_v3	0	obs	REGRESSAO
+st620_max_run4_v3	0	obs	REGRESSAO
+st620_max_run5_v3	0	obs	REGRESSAO
+st620_max_run6_v3	0	obs	REGRESSAO
+st620_runs_ok_v3	0	gate	0 de 6 (gate >=4). Reconferido: producao da' 11 em 6/6 no mesmo ambiente.
+boot_lifted_functions_v3	51990	gate	-4233 vs 56223
+lift_functions_v3	51839	estrutura	'void func_X(' no lift; v2 tem 56072 -> 4262 ausentes, 29 novas
+lift_chunks_v3	7	estrutura	4.03M linhas
+manifest_markers_v3	211	gate	de 244; 9 ausentes, 24 a menos
+apply_all_checks_v3	5	gate	5 de 5 verdes; so' os 2 FAILED provados impossiveis
+chamadas_sem_definicao_v3	0	estrutura	lift auto-consistente -> as 4262 so' entram por despacho INDIRECTO
+#
+# PONTO EXACTO DE PARAGEM (medido, /tmp/smoke_boot_gow2*_run1.log):
+#   producao: allocate(0x100000)->0x40000000  E  allocate(0x7D00000)->0x40100000 (125MB, heap principal)
+#   v3:       so' a 1a. A 2a NUNCA acontece; o boot fica preso no sampler e o log acaba em 55 linhas
+#             (producao: 3235 linhas). Tudo ate' ai' e' identico linha a linha.
+#
+# === RELIFT V4 (2026-07-26) — MESMO LIFT, COM O FIX DO LIFTER: PASSA ===
+# Unica diferenca para o v3: ps3recomp 1c30e12 "truncated-bounds repair". O lifter
+# deixa de descartar codigo quando o functions.json sub-reporta um `end`.
+# No relift: "Truncated-bounds repair: extended 180 function(s), 18984 byte(s) of
+# code recovered" — as MESMAS 180 que tools/audit_boundaries.py reportava como I3.
+# Causa raiz provada por experimento antes do fix: restaurar SO' func_0037C384 a mao
+# (as 10 instrucoes descartadas continham `bl 0x00379C70`) fez reaparecer
+# allocate(size=0x7D00000) -> 0x40100000. Mesma classe do bug func_002550C8.
+#
+st620_max_run1_v4	11	obs	>=3
+st620_max_run2_v4	11	obs	>=3
+st620_max_run3_v4	11	obs	>=3
+st620_max_run4_v4	1	obs	preso em 1 (flakiness de timing, NAO estrutural: 3195 linhas de log
+#	 	 	contra 3236 do run1, e faz o allocate de 0x7D00000; swap 1481M, abaixo do limiar)
+st620_max_run5_v4	11	obs	>=3
+st620_max_run6_v4	11	obs	>=3
+st620_runs_ok_v4	5	gate	5 de 6 — PASSA (gate >=4). baseline1 deu 4/6, baseline2 6/6.
+boot_lifted_functions_v4	52068	gate	+78 vs v3 (51990); producao 56223 (a diferenca restante e' benigna:
+#	 	 	1919 das ausentes caem fora de qualquer seccao executavel — o lift antigo
+#	 	 	desassemblou dados; 0 starts do functions.json e 0 EAs da OPD em falta)
+lift_functions_v4	51917	estrutura	+78 vs v3
+manifest_markers_v4	211	gate	de 244 — inalterado vs v3; os 33 em falta NAO afectam o boot
+apply_all_checks_v4	5	gate	5 de 5 verdes; so' os 2 FAILED provados impossiveis
+#
+# VEREDICTO RDY-0: um lift regenerado do ZERO produz um binario equivalente ao de
+# producao no gate M0. A cadeia lifter -> apply_all_patches -> build_macos corre sem
+# uma unica edicao manual no lift.
+#
+# === PROMOCAO (2026-07-26) — o lift regenerado E' AGORA A PRODUCAO ===
+# recomp_macos_v2 (lift de 20 jul, escrito a mao) -> recomp_macos_v2.pre_v4 (preservado)
+# recomp_macos_v4 (regenerado)                    -> recomp_macos_v2
+# boot_gow2 reconstruido a partir dele; boot_gow2.pre_v4 preservado. Reversivel.
+#
+st620_max_run1_prom	11	obs	>=3
+st620_max_run2_prom	11	obs	>=3
+st620_max_run3_prom	11	obs	>=3
+st620_max_run4_prom	11	obs	>=3
+st620_max_run5_prom	11	obs	>=3
+st620_max_run6_prom	11	obs	>=3
+st620_runs_ok_prom	6	gate	6 de 6 — IGUALA o baseline 2 da producao antiga (tambem 6/6).
+#	 	 	Confirma que o 5/6 do v4 era flakiness de timing, nao defeito estrutural.
+boot_lifted_functions_prom	52068	gate	inalterado vs v4
+#
+# A partir daqui o lift de producao E' reproduzivel: apagar recomp_macos_v2 e correr
+#   ppu_lifter.py + apply_all_patches.sh + build_macos.sh
+# devolve um binario equivalente. Era isto o RDY-0.
+#
+# === CORRECCAO AO VEREDICTO ACIMA (2026-07-26, mais tarde no mesmo dia) ===
+# "equivalente" acima esta' MEDIDO SO' NA INTRO. O gate M0 mede st620 ate' 11 e nao ve'
+# mais nada. Ao classificar os 33 marcadores para a Fase 3 descobriu-se perda funcional
+# real no lift promovido, invisivel ao M0:
+#   causa: o lifter passou a materializar o TOC estaticamente
+#          (gpr[2] = 0x00541178ULL /*TOCFIX*/, 17268 sitios) em vez de o ler da pilha
+#          (vm_read64(gpr[1]+0x28), 17602 -> 4). Todas as agulhas dos patch_*_opd.py
+#          terminam na linha antiga e deixaram de casar.
+#   E OS PATCHES NAO SE QUEIXARAM: 'fixed 0' + 'OK' + rc=0 -> o runner classifica
+#   ALREADY-APPLIED (conteudo nao mudou) e o gate fica verde. Ver
+#   notes/2026-07-26-tocfix-matou-36-conversoes-opd.md
+#
+# Nota de contagem: 52 NAO sao 52 conversoes. 52 e' a contagem da string ps3_call_opd no
+# lift antigo = 47 CHAMADAS + 3 declaracoes + 2 comentarios. O alvo real sao 47 chamadas.
+#
+opd_calls_pre_v4	47	ref	ps3_call_opd(ctx, -- o alvo
+opd_calls_prod_antes	11	obs	depois da promocao, ANTES de corrigir as agulhas
+opd_calls_prod_depois	35	obs	depois de 5 patches corrigidos (+24). FALTAM 12.
+opd_calls_em_falta	12	gap	TODAS de func_0014B1F0. O dono patch_14b1f0_opd.py tem o
+#	 	 	defeito IDENTICO: 'replaced pat1=0 pat2=0 / remaining indirect 12 / OK' rc=0.
+guarda_4F000000_pre_v4	111	ref	bounds-check contra memoria-lixo
+guarda_4F000000_prod	76	obs	era 75; os 5 patches repoem 1. FALTAM 35, em 13 funcoes,
+#	 	 	com ~30 patch_*.py donos, todos com o mesmo defeito silencioso (spot-check
+#	 	 	de 5: todos rc=0 / inalterado / ALREADY-APPLIED, um chega a imprimir
+#	 	 	'score ok=21 fail=0' com blocos funcionais inteiros ausentes do lift).
+familias_marcador_degradadas	17	gap	os 5 patches repoem 6, ficam 9. As maiores:
+#	 	 	POSTINTRO 74->19, FIOSOPEN 70->35.
+#
+# Smoke apos repor as 24 conversoes: st620=11 em 5/6 (run3 em 1 por flakiness de timing --
+# 3181 linhas contra 3218 e faz o allocate de 0x7D00000). Passa o gate, sem regressao.
+# As probes novas nao aparecem no log porque estao gated por env var, como manda a regra.
+#
+# O run_checks do apply_all_patches.sh tem 5 verificacoes e NENHUMA conta conversoes por
+# funcao -- e' por isso que um lift a 35/47 chamadas e a 76/111 guardas passa --check a
+# verde. Corrigir isso e' a Fase 4 (catalogo de patches como gate que falha).

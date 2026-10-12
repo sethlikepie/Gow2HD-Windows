@@ -1,0 +1,5 @@
+build/
+shots/
+*.part
+__pycache__/
+test/stub_scripts/stub_game.exe

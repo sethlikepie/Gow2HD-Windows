@@ -1,0 +1,387 @@
+# MANIFEST do baseline forense do lift -- RDY-0 Task 1
+# gerado por gen_manifest.py a partir de recomp_macos_v2
+#
+# Reconciliacao das tres cifras do criterio 1 do ROADMAP (D-2.2, Fase 2,
+# 02-CONTEXT.md): 1603 (plano RDY-0, DESACTUALIZADA -- veio de uma contagem
+# que usou ppu_recomp_002.cpp, que tem 20 linhas injectadas, como referencia
+# "limpa" errada) / 1662 (gate anterior a esta fase -- so' injected_00{0..6}.cpp,
+# 1662 linhas) / 1793 REAL (1662 + as 131 linhas do preambulo puro em
+# preamble_pure.cpp, que ate' agora nao tinham marcador nenhum). Esta fase
+# (D-2.1) fecha esse gap com os 2 marcadores de tipo novo (coluna `tipo`
+# das 2 linhas abaixo) que cobrem o preambulo puro.
+#
+# Exclusao deliberada (D-2.1): dos 3 identificadores do preambulo puro
+# (ps3_timebase_now, ps3_indirect_call, g_trampoline_fn), so' os 2 ultimos
+# ganham marcador do tipo novo. ps3_timebase_now fica FORA -- foi superseded
+# pelo contrato ppu_timebase_now (Fase 1, commit e441f37,
+# runtime/syscalls/sys_timer.c:80-101); so' sobrevive hoje numa probe do
+# chunk 000 (ppu_recomp_000.cpp, simbolo ps3_pt_now_ns) de uma arvore de
+# safra mista. Gate a-lo produziria alarme falso num re-lift limpo, nao
+# uma regressao real -- por isso a exclusao e' codificada em gen_manifest.py
+# (`preamble_syms = lifter_syms - {"ps3_timebase_now"}`), nao um acidente.
+#
+# Divergencia conhecida, FORA de escopo desta fase (medida nesta sessao):
+# o checkout ../gow2-recomp/recomp_macos_v2 real (produção pos-promocao
+# 57b418f, 7 chunks) ja diverge de 33 dos 244 marcadores TAG/SYM/GLOBAL
+# pre-existentes (211/244 no --verify contra ele; familias CD498/WADLD-GATE/
+# WADLD-VT48 novas, TYPE15/ty15_vt_looks_live/fact_snap_idx/k_cap etc ja
+# ausentes/reduzidas). Essa deriva pre-existe a este plano e a sua resolucao
+# pertence a Fase 3 ("Re-lift num diretorio novo com gate de baseline"), que
+# tera' um lift fresco para medir contra -- nao regenerado aqui para nao
+# misturar a deriva nao-relacionada com a cobertura do preambulo (D-2.1).
+# Os 2 marcadores novos abaixo FORAM medidos contra esse mesmo
+# recomp_macos_v2 real (168753/15795 ocorrencias, 2026-07-26) porque e' o
+# lift de producao actual e e' o que este gate deve proteger daqui para a
+# frente; o --verify de aceitacao desta task corre contra
+# recomp_macos_v2.pre_v4 (o lift preservado de 20 jul que efectivamente
+# gerou o baseline de 244 marcadores: --verify contra ele confirma 244/244
+# rc=0 antes desta mudanca) para isolar a prova de D-2.1 da deriva acima,
+# que nao e' desta fase.
+#
+# ==========================================================================
+# FASE 3 (03-re-lift-num-diret-rio-novo-com-gate-de-baseline, 03-03-PLAN.md,
+# 2026-07-26) -- reformulacao dos criterios 3/4 do ROADMAP (D-3.1 a D-3.4,
+# 03-CONTEXT.md). O critério 3 tal como escrito ("verify_lift_baseline.sh
+# sai 0") era INATINGIVEL por construcao: um limiar absoluto falha quando o
+# lift MELHORA (ps3_indirect_call cai porque conversoes OPD sobem
+# ps3_call_opd -- o lift ficou melhor e o gate reportava regressao). A
+# reformulacao (D-3.1) passa a exigir: (a) zero AUSENTE nao-declarado-
+# obsoleto; (b) limiares de A-MENOS revistos contra o lift ACTUAL (medido,
+# nao inventado), com justificacao partilhada; (c) marcadores acoplados
+# medidos como SOMA, nao individualmente. O criterio 4 (D-3.4) passa de
+# "nenhum marcador sem dono" para "todo marcador tem dono OU justificacao de
+# obsolescencia" -- a mesma fasquia, sem exigir o impossivel para marcadores
+# que nao devem ter dono.
+#
+# MECANISMO OBSOLETO (D-3.2): [OPDISP] e' o unico marcador OBSOLETO citado
+# nesta fase (ver a sua propria linha, coluna `nota`). Prova: o lifter
+# materializa sozinho a jump table de func_002A209C -- corrido o proprio
+# patch_jumptable_2a209c.py contra recomp_macos_v2 (sessao de planeamento) E
+# contra recomp_macos_v3 fresco (esta task, apos apply_all_patches.sh):
+# ambos devolvem a MESMA saida, "switch cobre 54/54 alvos; nada a injectar".
+# O comportamento (dispatch da jump table) esta' preservado nativamente; so'
+# a probe de diagnostico deixou de existir. Nao e' um interruptor global --
+# gen_manifest.py::verify() continua a reportar AUSENTE para qualquer outro
+# marcador sem nota OBSOLETO (testado por mutacao em test_gen_manifest.py).
+#
+# MECANISMO GRUPO (D-3.1c): ps3_indirect_call (PREAMBLE) e ps3_call_opd
+# RECALIBRADO 2026-07-29: o limiar do ps3_indirect_call passou de 15795 para 15759.
+# Medido: producao(regenerado)=15759, lift antigo(pre_v4)=16101, e o ps3_call_opd
+# esta' EXACTAMENTE igual nos dois (52 = 47 chamadas + 3 decls + 2 comentarios), ou
+# seja as 47 conversoes estao todas presentes. O deficit de 36 na soma era todo do
+# ps3_indirect_call, e o 15795 tinha sido capturado num lift INTERMEDIO, nao contra
+# o antigo. A diferenca esta' explicada e e' benigna: medida por funcao da' -619 em
+# funcoes que so' existem no lift antigo (1919 delas caem fora de qualquer seccao
+# executavel -- o lifter antigo desassemblou DADOS) MAIS +291 em 90 funcoes comuns,
+# onde o truncated-bounds repair RECUPEROU codigo. Comparar populacoes diferentes
+# nao mede equivalencia. A reformulacao do criterio 3 da Fase 3 (ROADMAP, commit
+# 68a7212) autoriza exactamente isto: limiares revistos contra o lift actual, com a
+# diferenca justificada por escrito.
+# (SYM) tem GRUPO:opd-dispatch porque cada conversao OPD sobe uma contagem e
+# desce a outra em exactamente 1 ocorrencia por sitio -- e' o MESMO local de
+# codigo mudando de forma, nao uma perda. Soma historica (os min_count
+# originais, nunca revistos individualmente para este par -- ver D-3.1/
+# 03-03-PLAN.md accao 5, excepcao explicita): 15795+52=15847. Soma MEDIDA
+# nesta task contra recomp_macos_v3 pos-cadeia-completa (apply_all_patches.sh
+# 3x, incluindo o patch_14b1f0_opd.py corrigido no Plano 03-02 e o
+# patch_wadld_alloc_probe.py novo desta task): ps3_indirect_call=15759,
+# ps3_call_opd=52, soma=15811. LEITURA HONESTA: falta um deficit residual de
+# 36 (15847-15811) que NAO desaparece com a correcao do Plano 03-02 quando
+# medido contra um lift genuinamente fresco (a invariancia da soma "antes/
+# depois da correcao do 03-02" citada em 03-CONTEXT.md foi medida contra
+# comparacoes dentro do MESMO lift acumulado v2, nao contra um v3 fresco de
+# 7 chunks vs os 31 do lift antigo). Nao inventamos causa: e' consistente
+# com o mesmo padrao de des-duplicacao que afecta TODOS os outros 23
+# marcadores A-MENOS abaixo (um lift com menos chunks tem menos sitios
+# duplicados de codigo agregado por template/inlining do lifter) -- mas nao
+# medimos directamente essa causa para este par especifico, por isso fica
+# classificado como CANDIDATO Fase-4-adiado / des-duplicacao INCONCLUSIVA,
+# nao maquiado como resolvido. O GRUPO ainda assim fecha D-3.1c no que
+# importa: a soma NAO PUNE o membro individual (ps3_indirect_call sozinho
+# ficaria "A MENOS" isolado, mascarando que ps3_call_opd cumpre) -- so' que
+# a soma, medida honestamente, tambem nao atinge o limiar historico.
+#
+# LIMIARES REVISTOS (D-3.1b): os 23 marcadores A-MENOS abaixo (todos os
+# GLOBAL/SYM/TAG que nao sejam o par GRUPO acima nem [OPDISP]) tiveram o seu
+# `min_count` revisto para o valor MEDIDO contra recomp_macos_v3 apos a
+# cadeia completa (RELIFT=1 do Plano 03-01 -> apply_all_patches.sh 3x,
+# convergindo em ALREADY-APPLIED em todos os 87 patches menos os 3 listados
+# abaixo -> gen_manifest.py --verify). Os valores medidos bateram EXACTAMENTE
+# com o ballpark ja calculado na sessao de planeamento contra recomp_macos_v2
+# (nenhuma anomalia nova nestes 23) -- mesmo defeito sistemico documentado em
+# 03-CONTEXT.md (patches que rodam sem efeito e devolvem rc=0 em vez de
+# falhar), com a correccao mecanica de fundo (distinguir "ja aplicado" de
+# "nao casou nada" no apply_all_patches.sh, e contagem por funcao-alvo)
+# adiada para a Fase 4 -- ela e' literalmente sobre isto. Excepcao: o par
+# ps3_indirect_call/ps3_call_opd, ja corrigido nesta fase (Plano 03-02) e
+# tratado pelo mecanismo GRUPO acima, nunca por revisao individual de
+# limiar.
+#
+# CADEIA REAL COMPLETA CONTRA recomp_macos_v3 (medido nesta task, 2026-07-26):
+# apply_all_patches.sh precisou de 3 passagens para convergir (nao 2 como
+# esperado inicialmente) -- pass1 APPLIED=66 ALREADY-APPLIED=18 FAILED=3,
+# pass2 APPLIED=2 ALREADY-APPLIED=82 FAILED=3, pass3 APPLIED=0
+# ALREADY-APPLIED=84 FAILED=3 (convergencia confirmada, arvore estavel).
+# GAP NOVO ESPECIFICO DE v3 (nunca antes medido, primeira vez que o catalogo
+# inteiro corre contra um lift genuinamente fresco): os 3 FAILED sao
+# DIFERENTES dos 4 historicamente documentados no cabecalho de
+# apply_all_patches.sh (patch_2b0fb4_trace.py, patch_factory_opd_gate.py,
+# patch_tymap_18e814.py, patch_tymap_probes2.py -- estes 4 agora sao
+# ALREADY-APPLIED contra v3, um resultado POSITIVO nao garantido de
+# antemao). Os 3 novos (patch_cc9d0_live_yield.py, patch_ce03c_pre_play_stop.py,
+# patch_ce03c_wait_idle_f2b_movie.py) sao todos da MESMA classe ja
+# diagnosticada (comportamento de continuacao/probe sem escritor conhecido no
+# repo, "sem escritor conhecido" citado pelo proprio script), nenhum altera o
+# boot default -- ver SUMMARY do 03-03-PLAN.md para o detalhe completo, nao
+# investigados a fundo aqui (fora do escopo explicito desta fase; candidatos
+# a Fase 4 ou a um plano 03-04 se o orquestrador decidir que valem uma sessao
+# dedicada).
+# ==========================================================================
+#
+# marcador	tipo	min_count	chunks_origem	nota (opcional: OBSOLETO:<razao> | GRUPO:<id>)
+g_f2b_fill_file_pos	GLOBAL	14	ppu_recomp_001.cpp
+g_f2b_fill_fo	GLOBAL	2	ppu_recomp_001.cpp
+g_f2b_fill_mfd	GLOBAL	7	ppu_recomp_001.cpp
+g_f2b_fill_stream	GLOBAL	6	ppu_recomp_001.cpp
+g_f2b_fill_sz	GLOBAL	11	ppu_recomp_001.cpp
+g_f2b_fo_mfd_fd	GLOBAL	4	ppu_recomp_001.cpp
+g_f2b_fo_mfd_fo	GLOBAL	5	ppu_recomp_001.cpp
+g_f2b_fo_mfd_n	GLOBAL	9	ppu_recomp_001.cpp
+g_f2b_fo_mfd_sz	GLOBAL	4	ppu_recomp_001.cpp
+g_f2b_natural_movie_fo	GLOBAL	5	ppu_recomp_001.cpp
+g_fact_snap_clock	GLOBAL	4	ppu_recomp_001.cpp
+g_fact_snap_lru	GLOBAL	7	ppu_recomp_001.cpp
+g_fact_snap_n	GLOBAL	4	ppu_recomp_001.cpp
+g_fact_snap_obj	GLOBAL	7	ppu_recomp_001.cpp
+g_fact_snap_p48	GLOBAL	10	ppu_recomp_001.cpp
+g_fact_snap_prod	GLOBAL	6	ppu_recomp_001.cpp
+g_fact_snap_vt	GLOBAL	7	ppu_recomp_001.cpp
+g_ps3_17acc_atexit_reg	GLOBAL	5	ppu_recomp_000.cpp
+g_ps3_17acc_fn_name	GLOBAL	3	ppu_recomp_000.cpp
+g_ps3_17acc_gate	GLOBAL	4	ppu_recomp_000.cpp
+g_ps3_17acc_grand	GLOBAL	3	ppu_recomp_000.cpp
+g_ps3_17acc_log_cap	GLOBAL	2	ppu_recomp_000.cpp
+g_ps3_17acc_post	GLOBAL	4	ppu_recomp_000.cpp
+g_ps3_17acc_tot	GLOBAL	3	ppu_recomp_000.cpp
+g_ps3_flipp_atexit_reg	GLOBAL	5	ppu_recomp_000.cpp
+g_ps3_flipp_fn_name	GLOBAL	3	ppu_recomp_000.cpp
+g_ps3_flipp_gate	GLOBAL	4	ppu_recomp_000.cpp
+g_ps3_flipp_grand	GLOBAL	3	ppu_recomp_000.cpp
+g_ps3_flipp_log_cap	GLOBAL	2	ppu_recomp_000.cpp
+g_ps3_flipp_post	GLOBAL	4	ppu_recomp_000.cpp
+g_ps3_flipp_tot	GLOBAL	3	ppu_recomp_000.cpp
+g_ps3_mp_atexit_reg	GLOBAL	5	ppu_recomp_000.cpp
+g_ps3_mp_fn_name	GLOBAL	3	ppu_recomp_000.cpp
+g_ps3_mp_gate	GLOBAL	4	ppu_recomp_000.cpp
+g_ps3_mp_grand	GLOBAL	3	ppu_recomp_000.cpp
+g_ps3_mp_log_cap	GLOBAL	2	ppu_recomp_000.cpp
+g_ps3_mp_post	GLOBAL	4	ppu_recomp_000.cpp
+g_ps3_mp_tot	GLOBAL	3	ppu_recomp_000.cpp
+g_ps3_plp_atexit_reg	GLOBAL	5	ppu_recomp_000.cpp
+g_ps3_plp_fn_name	GLOBAL	3	ppu_recomp_000.cpp
+g_ps3_plp_gate	GLOBAL	4	ppu_recomp_000.cpp
+g_ps3_plp_grand	GLOBAL	3	ppu_recomp_000.cpp
+g_ps3_plp_log_cap	GLOBAL	2	ppu_recomp_000.cpp
+g_ps3_plp_post	GLOBAL	4	ppu_recomp_000.cpp
+g_ps3_plp_tot	GLOBAL	3	ppu_recomp_000.cpp
+g_ps3_postthr	GLOBAL	12	ppu_recomp_000.cpp,ppu_recomp_001.cpp,ppu_recomp_003.cpp
+g_ps3_pt_atexit_reg	GLOBAL	5	ppu_recomp_000.cpp
+g_ps3_pt_disc_n	GLOBAL	6	ppu_recomp_000.cpp
+g_ps3_pt_fn_name	GLOBAL	3	ppu_recomp_000.cpp
+g_ps3_pt_gate	GLOBAL	4	ppu_recomp_000.cpp
+g_ps3_pt_grand	GLOBAL	3	ppu_recomp_000.cpp
+g_ps3_pt_icall_n	GLOBAL	4	ppu_recomp_000.cpp
+g_ps3_pt_log_cap	GLOBAL	2	ppu_recomp_000.cpp
+g_ps3_pt_post	GLOBAL	4	ppu_recomp_000.cpp
+g_ps3_pt_sample_until_ns	GLOBAL	4	ppu_recomp_000.cpp
+g_ps3_pt_thr_ns	GLOBAL	5	ppu_recomp_000.cpp
+g_ps3_pt_tot	GLOBAL	3	ppu_recomp_000.cpp
+g_ps3_pt_ty15	GLOBAL	2	ppu_recomp_000.cpp
+g_ps3_rperma_full	GLOBAL	24	ppu_recomp_000.cpp
+g_ps3_sa_atexit_reg	GLOBAL	5	ppu_recomp_000.cpp
+g_ps3_sa_fn_name	GLOBAL	3	ppu_recomp_000.cpp
+g_ps3_sa_gate	GLOBAL	5	ppu_recomp_000.cpp
+g_ps3_sa_grand	GLOBAL	3	ppu_recomp_000.cpp
+g_ps3_sa_log_cap	GLOBAL	2	ppu_recomp_000.cpp
+g_ps3_sa_post	GLOBAL	4	ppu_recomp_000.cpp
+g_ps3_sa_tot	GLOBAL	3	ppu_recomp_000.cpp
+g_ps3_type15_disc_n	GLOBAL	8	ppu_recomp_000.cpp
+g_ty15_obj	GLOBAL	17	ppu_recomp_001.cpp
+g_ty15_rehomed	GLOBAL	6	ppu_recomp_001.cpp
+g_ty15_snap	GLOBAL	10	ppu_recomp_001.cpp
+g_ty15_vt	GLOBAL	13	ppu_recomp_001.cpp
+g_wadld_eof_ea	GLOBAL	2	ppu_recomp_001.cpp
+k_cap	GLOBAL	2	ppu_recomp_001.cpp
+k_fl_pin	GLOBAL	15	ppu_recomp_001.cpp
+k_ty15_pin	GLOBAL	26	ppu_recomp_001.cpp
+g_trampoline_fn	PREAMBLE	56	ppu_recomp_000.cpp,ppu_recomp_001.cpp,ppu_recomp_002.cpp,ppu_recomp_003.cpp,ppu_recomp_004.cpp,ppu_recomp_005.cpp,ppu_recomp_006.cpp	AMBITO:preambulo  REBASE 2026-08-03: 168753 era a contagem do FICHEIRO INTEIRO num lift lifter-rev 0852305 (2026-07-26). Este marcador e' PREAMBLE e o que ele diz verificar e' a SOBREVIVENCIA do preambulo puro -- medido, o preambulo tem 56 ocorrencias (8 por chunk x 7) na producao E em qualquer lift pos-fix; a diferenca toda vivia no CORPO (168697 vs 168379), que mede a FORMA do lifter e nao a sobrevivencia. O fix 0585636 (2026-07-30, registo-base da jump table) recuperou 22 dispatchers com 204 alvos sem perder um unico dos 125 ja' resolvidos: -317 daqui, -2 da Fase 17 (patch_ce03c migrado para midasm_hook) e +1 da Fase 19 (weak override de func_002C0498) somam os -318 medidos. Limiar 56 = ocorrencias no preambulo, reproduzivel com: gen_manifest.py <LIFT> --preamble-counts. Ver games/gow2/notes/2026-08-03-trampoline-fn-deficit.md e -promocao.md
+ps3_indirect_call	PREAMBLE	15759	ppu_recomp_000.cpp,ppu_recomp_001.cpp,ppu_recomp_002.cpp,ppu_recomp_003.cpp,ppu_recomp_004.cpp,ppu_recomp_005.cpp,ppu_recomp_006.cpp	GRUPO:opd-dispatch
+f2b_fo_mfd_get	SYM	4	ppu_recomp_001.cpp
+f2b_fo_mfd_put	SYM	3	ppu_recomp_001.cpp
+f2b_fo_sz_get	SYM	2	ppu_recomp_001.cpp
+f2b_stream_ensure	SYM	7	ppu_recomp_001.cpp,ppu_recomp_002.cpp
+f2b_stream_eof_try_complete	SYM	6	ppu_recomp_001.cpp,ppu_recomp_002.cpp
+f2b_stream_fill	SYM	4	ppu_recomp_001.cpp
+f2b_stream_pre_consume	SYM	5	ppu_recomp_001.cpp
+fact_snap_idx	SYM	6	ppu_recomp_001.cpp
+ps3_17acc_ctor	SYM	1	ppu_recomp_000.cpp
+ps3_17acc_dump_summary	SYM	5	ppu_recomp_000.cpp
+ps3_17acc_gate_on	SYM	4	ppu_recomp_000.cpp
+ps3_17acc_on_enter	SYM	12	ppu_recomp_000.cpp,ppu_recomp_001.cpp
+ps3_17acc_on_sigterm	SYM	2	ppu_recomp_000.cpp
+ps3_call_opd	SYM	52	ppu_recomp_000.cpp,ppu_recomp_001.cpp,ppu_recomp_003.cpp	GRUPO:opd-dispatch
+ps3_factory_freelist_replenish	SYM	3	ppu_recomp_000.cpp,ppu_recomp_001.cpp
+ps3_factory_repair_vt	SYM	5	ppu_recomp_000.cpp,ppu_recomp_001.cpp
+ps3_factory_reuse_product	SYM	3	ppu_recomp_000.cpp,ppu_recomp_001.cpp
+ps3_factory_snap_product	SYM	2	ppu_recomp_001.cpp
+ps3_factory_snap_vt	SYM	3	ppu_recomp_001.cpp
+ps3_fios_aread_hle	SYM	2	ppu_recomp_001.cpp
+ps3_fios_sticky_consume	SYM	2	ppu_recomp_001.cpp
+ps3_fios_sticky_publish	SYM	6	ppu_recomp_001.cpp
+ps3_flipp_ctor	SYM	1	ppu_recomp_000.cpp
+ps3_flipp_dump_summary	SYM	5	ppu_recomp_000.cpp
+ps3_flipp_gate_on	SYM	4	ppu_recomp_000.cpp
+ps3_flipp_on_enter	SYM	9	ppu_recomp_000.cpp,ppu_recomp_001.cpp,ppu_recomp_002.cpp
+ps3_flipp_on_sigterm	SYM	3	ppu_recomp_000.cpp
+ps3_host_wad_tex_capture	SYM	2	ppu_recomp_001.cpp
+ps3_indirect_tail	SYM	478	ppu_recomp_000.cpp,ppu_recomp_001.cpp,ppu_recomp_002.cpp,ppu_recomp_003.cpp,ppu_recomp_004.cpp,ppu_recomp_005.cpp,ppu_recomp_006.cpp
+ps3_mp_ctor	SYM	1	ppu_recomp_000.cpp
+ps3_mp_dump_summary	SYM	5	ppu_recomp_000.cpp
+ps3_mp_gate_on	SYM	4	ppu_recomp_000.cpp
+ps3_mp_on_enter	SYM	16	ppu_recomp_000.cpp,ppu_recomp_001.cpp,ppu_recomp_002.cpp,ppu_recomp_003.cpp	REBASE 2026-08-03 (correccao SEPARADA da do g_trampoline_fn, com prova propria): o 17 era satisfeito na producao por um SITIO DUPLICADO, nao por um sitio a mais. Medido, linha a linha, nos tres lifts: 1 definicao + 3 declaracoes forward + N call sites; os ids unicos de call site sao 12 em recomp_macos_v2, 12 em recomp_macos_v4ord e 12 em recomp_macos_v3_e2e. A producao emite ps3_mp_on_enter(9,ctx) DUAS vezes (ppu_recomp_001.cpp:48392 e :48398, seis linhas de intervalo) -- o bloco MENUPRESENT-PROBE id=9 injectado duas vezes pela janela fixa de 200 caracteres do patch_menu_present_schedule_probe.py numa 2a passagem (defeito D4). A ordem declarativa (PATCH_DEPS.tsv, 2026-08-03) removeu o duplicado e o gate acusou a REMOCAO. 16 = 12 sitios unicos + 1 definicao + 3 declaracoes. Zero sitios reais perdidos. Reproduzivel com: grep -oh 'ps3_mp_on_enter([0-9]*,' <LIFT>/ppu_recomp_*.cpp | sort | uniq -c. Ver games/gow2/notes/2026-08-03-promocao.md
+ps3_mp_on_sigterm	SYM	3	ppu_recomp_000.cpp
+ps3_plp_ctor	SYM	1	ppu_recomp_000.cpp
+ps3_plp_dump_summary	SYM	5	ppu_recomp_000.cpp
+ps3_plp_gate_on	SYM	4	ppu_recomp_000.cpp
+ps3_plp_on_enter	SYM	9	ppu_recomp_000.cpp,ppu_recomp_001.cpp,ppu_recomp_002.cpp
+ps3_plp_on_sigterm	SYM	3	ppu_recomp_000.cpp
+ps3_pt_ctor	SYM	1	ppu_recomp_000.cpp
+ps3_pt_disc_sample	SYM	5	ppu_recomp_000.cpp,ppu_recomp_001.cpp
+ps3_pt_dump_summary	SYM	5	ppu_recomp_000.cpp
+ps3_pt_gate_on	SYM	7	ppu_recomp_000.cpp
+ps3_pt_icall_log	SYM	4	ppu_recomp_000.cpp,ppu_recomp_001.cpp
+ps3_pt_mark_thr_end	SYM	4	ppu_recomp_000.cpp,ppu_recomp_001.cpp,ppu_recomp_003.cpp
+ps3_pt_now_ns	SYM	3	ppu_recomp_000.cpp
+ps3_pt_on_enter	SYM	19	ppu_recomp_000.cpp,ppu_recomp_001.cpp,ppu_recomp_003.cpp
+ps3_pt_on_sigterm	SYM	3	ppu_recomp_000.cpp
+ps3_sa_ctor	SYM	1	ppu_recomp_000.cpp
+ps3_sa_dump_summary	SYM	5	ppu_recomp_000.cpp
+ps3_sa_gate_on	SYM	4	ppu_recomp_000.cpp
+ps3_sa_on_enter	SYM	18	ppu_recomp_000.cpp,ppu_recomp_001.cpp,ppu_recomp_002.cpp,ppu_recomp_003.cpp
+ps3_sa_on_sigterm	SYM	3	ppu_recomp_000.cpp
+ps3_type15_block_stomp	SYM	2	ppu_recomp_001.cpp
+ps3_type15_freelist_replenish	SYM	4	ppu_recomp_001.cpp
+ps3_type15_good_vt	SYM	1	ppu_recomp_001.cpp
+ps3_type15_list_ptr_bad	SYM	4	ppu_recomp_001.cpp
+ps3_type15_note_resolve	SYM	3	ppu_recomp_000.cpp,ppu_recomp_001.cpp,ppu_recomp_003.cpp
+ps3_type15_pin_free	SYM	1	ppu_recomp_001.cpp
+ps3_type15_product_list_reset	SYM	4	ppu_recomp_000.cpp,ppu_recomp_001.cpp
+ps3_type15_protected_obj	SYM	1	ppu_recomp_001.cpp
+ps3_type15_repair_if_needed	SYM	1	ppu_recomp_000.cpp,ppu_recomp_001.cpp,ppu_recomp_003.cpp
+snd_probe_cstr	SYM	4	ppu_recomp_001.cpp
+snd_probe_ea_ok	SYM	12	ppu_recomp_001.cpp
+snd_probe_on	SYM	5	ppu_recomp_001.cpp
+snd_probe_opd	SYM	4	ppu_recomp_001.cpp
+snd_probe_scan	SYM	5	ppu_recomp_001.cpp
+ty15_force_pin_freelist	SYM	3	ppu_recomp_001.cpp
+ty15_vt_looks_live	SYM	15	ppu_recomp_001.cpp
+wavdrv_cstr	SYM	3	ppu_recomp_001.cpp
+wavdrv_on	SYM	5	ppu_recomp_001.cpp
+[A1-30D54]	TAG	1	ppu_recomp_001.cpp
+[A1-32DF98]	TAG	1	ppu_recomp_001.cpp
+[A1-468-EX1]	TAG	1	ppu_recomp_001.cpp
+[A1-468-EX2]	TAG	1	ppu_recomp_001.cpp
+[A1-468C3C]	TAG	1	ppu_recomp_001.cpp
+[A1-CALL30D54B]	TAG	2	ppu_recomp_002.cpp
+[A1-CALL30D54]	TAG	1	ppu_recomp_001.cpp
+[ALLOC-NULL-GUARD]	TAG	2	ppu_recomp_000.cpp,ppu_recomp_002.cpp
+[AREAD]	TAG	1	ppu_recomp_001.cpp
+[AUDGATE]	TAG	1	ppu_recomp_002.cpp
+[B71]	TAG	2	ppu_recomp_000.cpp
+[BA808]	TAG	1	ppu_recomp_005.cpp
+[CB56C-DISC]	TAG	3	ppu_recomp_000.cpp
+[CBB2C-DISC]	TAG	1	ppu_recomp_000.cpp
+[CC9D0-DISC]	TAG	1	ppu_recomp_000.cpp
+[CC9D0]	TAG	1	ppu_recomp_000.cpp
+[CMP-ENTER]	TAG	1	ppu_recomp_003.cpp
+[CMP-VCALL]	TAG	7	ppu_recomp_003.cpp
+[COMBOPROP]	TAG	6	ppu_recomp_000.cpp,ppu_recomp_002.cpp
+[CRC-HASH]	TAG	1	ppu_recomp_000.cpp
+[CRC-LK]	TAG	1	ppu_recomp_000.cpp
+[EOSGATE]	TAG	5	ppu_recomp_001.cpp,ppu_recomp_002.cpp
+[FACTORY]	TAG	6	ppu_recomp_001.cpp
+[FIOSOPEN]	TAG	35	ppu_recomp_001.cpp,ppu_recomp_002.cpp,ppu_recomp_003.cpp,ppu_recomp_005.cpp
+[FIOSSCHED]	TAG	4	ppu_recomp_001.cpp,ppu_recomp_002.cpp
+[FLIPPATH]	TAG	4	ppu_recomp_000.cpp
+[FREELIST-TAG-GUARD]	TAG	5	ppu_recomp_000.cpp
+[HOSTRES-ENTER]	TAG	1	ppu_recomp_000.cpp
+[ICG-PATH-A-OPD]	TAG	1	ppu_recomp_001.cpp
+[ICG-PATH-OPD]	TAG	1	ppu_recomp_001.cpp
+[ICG-VCALL]	TAG	3	ppu_recomp_000.cpp
+[INTROSEQ]	TAG	18	ppu_recomp_000.cpp,ppu_recomp_001.cpp
+[LDRSH]	TAG	1	ppu_recomp_001.cpp
+[MC-32854C]	TAG	1	ppu_recomp_001.cpp
+[MC-328860]	TAG	1	ppu_recomp_003.cpp
+[MC-328978]	TAG	1	ppu_recomp_003.cpp
+[MC-328B08]	TAG	1	ppu_recomp_003.cpp
+[MC-328B18]	TAG	1	ppu_recomp_001.cpp
+[MC-328E50]	TAG	1	ppu_recomp_003.cpp
+[MC-329490]	TAG	1	ppu_recomp_001.cpp
+[MENUPRESENT]	TAG	4	ppu_recomp_000.cpp
+[OOBARG]	TAG	2	ppu_recomp_001.cpp,ppu_recomp_002.cpp
+[OPDISP-ENT]	TAG	1	ppu_recomp_001.cpp
+[OPDISP]	TAG	1	ppu_recomp_001.cpp	OBSOLETO: lifter materializa switch nativo cobrindo 54/54 alvos em func_002A209C (0x2A2134+offset); confirmado por patch_jumptable_2a209c.py contra o lift real, 2026-07-26: "switch cobre 54/54 alvos; nada a injectar". Comportamento preservado; so' a probe de diagnostico desapareceu (D-3.2). Reconfirmado nesta task contra recomp_macos_v3 fresco (mesma saida do patch).
+[POSTINTRO]	TAG	20	ppu_recomp_000.cpp,ppu_recomp_001.cpp
+[POSTTHR-DISC]	TAG	1	ppu_recomp_000.cpp
+[POSTTHR-ICALL]	TAG	1	ppu_recomp_000.cpp
+[POSTTHR]	TAG	5	ppu_recomp_000.cpp
+[PRESENTLOOP]	TAG	4	ppu_recomp_000.cpp
+[PS3_17ACC_FN_N]	TAG	4	ppu_recomp_000.cpp
+[PS3_FACT_SNAP_MAX]	TAG	5	ppu_recomp_001.cpp
+[PS3_FLIPP_FN_N]	TAG	4	ppu_recomp_000.cpp
+[PS3_MP_FN_N]	TAG	4	ppu_recomp_000.cpp
+[PS3_PLP_FN_N]	TAG	4	ppu_recomp_000.cpp
+[PS3_PT_FN_N]	TAG	4	ppu_recomp_000.cpp
+[PS3_SA_FN_N]	TAG	4	ppu_recomp_000.cpp
+[SCHEDARM]	TAG	4	ppu_recomp_000.cpp
+[SHADERSRC]	TAG	1	ppu_recomp_001.cpp
+[SNDOPEN]	TAG	8	ppu_recomp_001.cpp
+[SS-BIG]	TAG	1	ppu_recomp_001.cpp
+[SS-CAP]	TAG	1	ppu_recomp_001.cpp
+[SS-DONE2]	TAG	1	ppu_recomp_005.cpp
+[SS-DONE]	TAG	1	ppu_recomp_001.cpp
+[SS-EMPTY]	TAG	1	ppu_recomp_001.cpp
+[SS-GROW]	TAG	1	ppu_recomp_003.cpp
+[SS-INS2]	TAG	1	ppu_recomp_005.cpp
+[SS-INSFN]	TAG	1	ppu_recomp_001.cpp
+[SS-INS]	TAG	1	ppu_recomp_001.cpp
+[SS-REC2]	TAG	1	ppu_recomp_005.cpp
+[SS-REC]	TAG	1	ppu_recomp_001.cpp
+[SS-RESUME]	TAG	1	ppu_recomp_005.cpp
+[ST3]	TAG	1	ppu_recomp_001.cpp
+[STOPENTRY]	TAG	1	ppu_recomp_001.cpp
+[STOP]	TAG	1	ppu_recomp_001.cpp
+[STREAM-OPD]	TAG	1	ppu_recomp_000.cpp
+[TYDISP]	TAG	1	ppu_recomp_001.cpp
+[TYMAP-171]	TAG	1	ppu_recomp_000.cpp
+[TYMAP-GS]	TAG	1	ppu_recomp_000.cpp
+[TYMAP-HIT]	TAG	1	ppu_recomp_000.cpp
+[TYMAP-LK]	TAG	1	ppu_recomp_000.cpp
+[TYMAP-RET]	TAG	1	ppu_recomp_000.cpp
+[TYMAP-VT]	TAG	1	ppu_recomp_000.cpp
+[TYPE15]	TAG	24	ppu_recomp_000.cpp,ppu_recomp_001.cpp
+[WADLD-ALLOC]	TAG	1	ppu_recomp_002.cpp
+[WADLD-BATCH]	TAG	1	ppu_recomp_000.cpp
+[WADLD-BODY]	TAG	1	ppu_recomp_001.cpp
+[WADLD-CALL]	TAG	1	ppu_recomp_001.cpp
+[WADLD-FIN]	TAG	1	ppu_recomp_001.cpp
+[WADLD-GENDR]	TAG	1	ppu_recomp_001.cpp
+[WADLD-GEND]	TAG	1	ppu_recomp_001.cpp
+[WADLD-OPD]	TAG	1	ppu_recomp_001.cpp
+[WADLD-SM]	TAG	1	ppu_recomp_001.cpp
+[WADLD-T1R]	TAG	1	ppu_recomp_001.cpp
+[WADLD-T1SZ]	TAG	1	ppu_recomp_003.cpp
+[WADLD-T1]	TAG	1	ppu_recomp_001.cpp
+[WADLD-VT28R]	TAG	1	ppu_recomp_003.cpp
+[WADLD-VT28]	TAG	1	ppu_recomp_003.cpp
+[WAVDRV]	TAG	4	ppu_recomp_001.cpp

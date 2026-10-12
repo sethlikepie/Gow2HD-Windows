@@ -1,0 +1,13 @@
+{
+  "source_path": "/Users/andrebrumcortezferreira/Documents/PESSOAL/ps3recomp/docs/MODULES_REFERENCE.md",
+  "type": "DOC",
+  "confidence": "high",
+  "manifest_override": true,
+  "title": "HLE Modules — Complete Reference",
+  "summary": "Reference documentation describing every HLE module in ps3recomp, its implementation pattern, and platform backends.",
+  "scope": ["HLE modules", "module architecture", "filesystem", "input", "audio", "video/graphics", "media/codec", "font/text", "network", "PSN/NP", "SPU/multitasking", "synchronization", "hardware/peripherals"],
+  "cross_refs": [],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

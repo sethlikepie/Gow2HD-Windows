@@ -1,0 +1,13 @@
+{
+  "source_path": "/Users/andrebrumcortezferreira/Documents/PESSOAL/ps3recomp/docs/RSX_GRAPHICS.md",
+  "type": "DOC",
+  "confidence": "high",
+  "manifest_override": true,
+  "title": "RSX Graphics Translation",
+  "summary": "Explains how ps3recomp translates PS3 RSX GPU commands to host graphics APIs across cellGcmSys, command processor, and backends.",
+  "scope": ["RSX graphics pipeline", "cellGcmSys", "rsx_commands", "D3D12 backend", "Null backend", "Vulkan backend", "cellResc", "cellVideoOut"],
+  "cross_refs": [],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

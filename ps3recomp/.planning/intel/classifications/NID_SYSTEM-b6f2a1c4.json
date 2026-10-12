@@ -1,0 +1,13 @@
+{
+  "source_path": "/Users/andrebrumcortezferreira/Documents/PESSOAL/ps3recomp/docs/NID_SYSTEM.md",
+  "type": "DOC",
+  "confidence": "high",
+  "manifest_override": true,
+  "title": "PS3 NID (Name Identifier) System",
+  "summary": "Reference guide explaining how PS3 function linking via NIDs works and how ps3recomp resolves them.",
+  "scope": ["NID computation", "PS3 linking", "NID resolution", "NID lookup table", "module registration framework", "NID database tools"],
+  "cross_refs": [],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

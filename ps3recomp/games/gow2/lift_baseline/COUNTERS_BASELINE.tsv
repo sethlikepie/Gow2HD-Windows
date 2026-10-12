@@ -1,0 +1,15 @@
+# COUNTERS_BASELINE.tsv -- baseline REAL congelado (D-5.2), medido por
+# accept_relift.sh contra a producao atual (recomp_macos_v2 / boot_gow2)
+# na primeira corrida em que este ficheiro nao existia.
+#
+# NOTA: 56072/56223 (ROADMAP.md/REQUIREMENTS.md) sao do lift ANTIGO
+# escrito a mao (31 chunks -- ver games/gow2/lift_baseline/counters_pre.tsv).
+# O lift regenerado (medido nesta sessao) tem function_table_count=51917
+# tanto na producao como no candidato -- gatear pelos absolutos antigos
+# faria este gate falhar sempre contra qualquer lift novo (D-5.2).
+contador	valor
+function_table_count	51917
+boot_lifted_functions	52068
+imp_modules	13
+imp_imports	151
+orfaos	0

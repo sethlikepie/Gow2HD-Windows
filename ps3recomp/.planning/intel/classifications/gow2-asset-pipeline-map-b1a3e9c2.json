@@ -1,0 +1,13 @@
+{
+  "source_path": "/Users/andrebrumcortezferreira/Documents/PESSOAL/ps3recomp/docs/gow2-asset-pipeline-map.md",
+  "type": "DOC",
+  "confidence": "high",
+  "manifest_override": true,
+  "title": "GoW2 — Mapa do pipeline de asset primário (R_PermA) e ponto da quebra",
+  "summary": "Root-cause trace of R_PermA.wad_ps3 asset stream stall: guest free-list allocator dereferences a tagged 0x80000000 word as a raw pointer, writing to uncommitted VM.",
+  "scope": ["R_PermA.wad_ps3", "asset pipeline", "free-list allocator", "vm_uncommitted_guard", "movie_io_pread", "func_00263178"],
+  "cross_refs": ["gow2_work/recomp_mid_v2/smoke_asset_pipeline.log"],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

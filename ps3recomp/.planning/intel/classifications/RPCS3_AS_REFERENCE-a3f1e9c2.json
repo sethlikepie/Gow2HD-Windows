@@ -1,0 +1,13 @@
+{
+  "source_path": "/Users/andrebrumcortezferreira/Documents/PESSOAL/ps3recomp/docs/RPCS3_AS_REFERENCE.md",
+  "type": "ADR",
+  "confidence": "high",
+  "manifest_override": true,
+  "title": "RPCS3 como referência de implementação (ps3recomp)",
+  "summary": "Defines how RPCS3 is used as an oracle/reference (syscalls, NIDs, HLE order, traces) to accelerate ps3recomp without embedding the emulator or copying GPL code.",
+  "scope": ["RPCS3", "static recompilation", "LV2/HLE", "GCM/RSX", "SPU", "licensing (GPLv2)"],
+  "cross_refs": ["https://github.com/RPCS3/rpcs3"],
+  "locked": false,
+  "precedence": null,
+  "notes": "manifest_override=true; type forced to ADR per MANIFEST_TYPE. Document does not contain explicit 'Status: Accepted' frontmatter, so locked left false."
+}

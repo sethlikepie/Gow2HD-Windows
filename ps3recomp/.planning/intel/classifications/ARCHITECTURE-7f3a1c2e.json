@@ -1,0 +1,13 @@
+{
+  "source_path": "/Users/andrebrumcortezferreira/Documents/PESSOAL/ps3recomp/docs/ARCHITECTURE.md",
+  "type": "ADR",
+  "confidence": "high",
+  "manifest_override": true,
+  "title": "ps3recomp Architecture",
+  "summary": "Technical overview of the static recompilation pipeline from PS3 Cell binaries to native host C/C++ code.",
+  "scope": ["Cell Broadband Engine", "PPU", "SPU", "RSX", "recompilation pipeline", "ELF loading", "disassembly", "control flow analysis", "code generation"],
+  "cross_refs": [],
+  "locked": false,
+  "precedence": null,
+  "notes": "MANIFEST_TYPE=ADR is authoritative and applied without content-based inference; content itself reads as general architecture documentation (DOC-like prose), not a decision record with Context/Decision/Consequences structure, and has no status field."
+}

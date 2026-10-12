@@ -1,0 +1,13 @@
+{
+  "source_path": "/Users/andrebrumcortezferreira/Documents/PESSOAL/ps3recomp/docs/MACOS_PORT_PLAN.md",
+  "type": "PRD",
+  "confidence": "high",
+  "manifest_override": true,
+  "title": "Plano de implementação — rodar ps3recomp / GoW2 no macOS",
+  "summary": "Diagnostic and layered plan (A-F) with acceptance criteria to make ps3recomp/GoW2 build and run natively on macOS arm64.",
+  "scope": ["macOS port", "arm64", "build portability", "SPU test suite", "RSX/Metal render", "GoW2 boot"],
+  "cross_refs": ["docs/BUILDING.md"],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

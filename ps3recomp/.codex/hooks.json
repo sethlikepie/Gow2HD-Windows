@@ -1,0 +1,149 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"/opt/homebrew/bin/node\" '/Users/andrebrumcortezferreira/Documents/PESSOAL/ps3recomp/.codex/hooks/gsd-prompt-guard.js'",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"/opt/homebrew/bin/node\" '/Users/andrebrumcortezferreira/Documents/PESSOAL/ps3recomp/.codex/hooks/gsd-read-guard.js'",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "Bash|Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"/opt/homebrew/bin/node\" '/Users/andrebrumcortezferreira/Documents/PESSOAL/ps3recomp/.codex/hooks/gsd-workflow-guard.js'",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"/opt/homebrew/bin/node\" '/Users/andrebrumcortezferreira/Documents/PESSOAL/ps3recomp/.codex/hooks/gsd-worktree-path-guard.js'",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash '/Users/andrebrumcortezferreira/Documents/PESSOAL/ps3recomp/.codex/hooks/gsd-validate-commit.sh'",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash|Edit|Write|MultiEdit|Agent|Task",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"/opt/homebrew/bin/node\" '/Users/andrebrumcortezferreira/Documents/PESSOAL/ps3recomp/.codex/hooks/gsd-context-monitor.js'",
+            "timeout": 10
+          }
+        ]
+      },
+      {
+        "matcher": "Read",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"/opt/homebrew/bin/node\" '/Users/andrebrumcortezferreira/Documents/PESSOAL/ps3recomp/.codex/hooks/gsd-read-injection-scanner.js'",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash '/Users/andrebrumcortezferreira/Documents/PESSOAL/ps3recomp/.codex/hooks/gsd-graphify-update.sh'",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash '/Users/andrebrumcortezferreira/Documents/PESSOAL/ps3recomp/.codex/hooks/gsd-phase-boundary.sh'",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"/opt/homebrew/bin/node\" '/Users/andrebrumcortezferreira/Documents/PESSOAL/ps3recomp/.codex/hooks/gsd-context-monitor.js'",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"/opt/homebrew/bin/node\" '/Users/andrebrumcortezferreira/Documents/PESSOAL/ps3recomp/.codex/hooks/gsd-check-update.js'"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash '/Users/andrebrumcortezferreira/Documents/PESSOAL/ps3recomp/.codex/hooks/gsd-session-state.sh'"
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"/opt/homebrew/bin/node\" '/Users/andrebrumcortezferreira/Documents/PESSOAL/ps3recomp/.codex/hooks/gsd-context-monitor.js'",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"/opt/homebrew/bin/node\" '/Users/andrebrumcortezferreira/Documents/PESSOAL/ps3recomp/.codex/hooks/gsd-context-monitor.js'",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

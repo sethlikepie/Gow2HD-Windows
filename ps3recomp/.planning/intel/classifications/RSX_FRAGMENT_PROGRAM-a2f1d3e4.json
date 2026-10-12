@@ -1,0 +1,13 @@
+{
+  "source_path": "/Users/andrebrumcortezferreira/Documents/PESSOAL/ps3recomp/docs/RSX_FRAGMENT_PROGRAM.md",
+  "type": "DOC",
+  "confidence": "high",
+  "manifest_override": true,
+  "title": "RSX Fragment Program (NV40 ISA) → HLSL",
+  "summary": "Reference and status document for the RSX NV40 fragment-program ISA decompiler and its HLSL translation.",
+  "scope": ["RSX fragment program", "NV40 ISA", "rsx_fp_decompiler", "HLSL", "shader decompiler"],
+  "cross_refs": [],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

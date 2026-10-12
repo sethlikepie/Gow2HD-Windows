@@ -1,0 +1,64 @@
+# PATCH_DEPS.tsv -- ordem de aplicacao dos patch_*.py, DECLARATIVA.
+#
+# O SITIO OBVIO para declarar que um patch precisa de outro. Quem acrescentar um
+# patch cuja agulha e' texto escrito por outro patch acrescenta UMA linha aqui --
+# nao ha ordem escondida em lado nenhum do apply_all_patches.sh.
+#
+# Consumido por: lift_baseline/order_patches.py, invocado por apply_all_patches.sh
+# (nos dois checkouts). Ordenacao topologica ESTAVEL: sem relacoes declaradas a
+# ordem e' exactamente a do glob alfabetico; cada relacao move o MINIMO necessario.
+# Inspeccionar a ordem efectiva:  ./apply_all_patches.sh --print-order
+#
+# formato:  patch <TAB> depende_de <TAB> razao
+#   "patch corre DEPOIS de depende_de", porque depende_de ESCREVE a ancora
+#   (ou o preambulo host) que a agulha de patch procura.
+#
+# Um nome que nao exista no corpus deste host e' ignorado com AVISO (nunca aborta).
+# Um CICLO falha ALTO -- nunca se resolve em silencio escolhendo um dos lados.
+#
+# ---------------------------------------------------------------------------
+# PROVENIENCIA das cinco relacoes abaixo
+# ---------------------------------------------------------------------------
+# Medidas offline em 2026-08-03 e documentadas em
+#   games/gow2/notes/2026-08-03-seis-patches-que-nao-reaplicam.md  (a analise)
+#   games/gow2/notes/2026-08-03-rebuild-e2e-medicao.md             (o efeito medido)
+#
+# Das seis falhas do E2E de 2026-08-02, NENHUMA e' deriva de forma do lifter:
+# cinco sao esta ordem. As tres primeiras relacoes valem, MEDIDAMENTE, dois elos
+# da cadeia de boot (elo 2 -> elo 4, 6/9 corridas, com dois controlos na mesma
+# sessao). Nao e' arrumacao cosmetica.
+# ---------------------------------------------------------------------------
+# patch	depende_de	razao
+patch_2b3d1c_movie_io.py	patch_f2b_multimb_install.py	exige o preambulo host f2b_fo_mfd_get no MESMO chunk de func_002B3D1C (patch_2b3d1c_movie_io.py:146-147,160-161; recusa rc=2 em :198-203). O preambulo nao e' codigo do lifter -- e' injectado pelo instalador F2B. Glob: #33 antes de #62.
+patch_fios_done_yield.py	patch_fios_sticky.py	a agulha e' o if+publish do done-word (ps3_fios_sticky_publish, patch_fios_done_yield.py:44-47), texto que so' existe depois de patch_fios_sticky.py injectar em func_00306534. Glob: #74 antes de #87.
+patch_fios_host_pop.py	patch_fios_open_probe.py	a agulha e' o fecho do bloco FIOS-OPEN-PROBE(op_alloc), assinado pela string "<-- SEM OP LIVRE (F2a)" (patch_fios_host_pop.py:62-65), escrita por patch_fios_open_probe.py. Glob: #83 antes de #84 -- falhava por UMA posicao. Divida a prazo: e' uma dependencia FUNCIONAL->PROBE, fragil por construccao; reancorar em codigo do lifter dentro de func_0030D5CC remove-a.
+patch_autoload_chain_probes.py	patch_b71_cb56c_reuse_block.py	injecta ALCHAIN-PROBE DENTRO de func_000B71B8, quebrando a comparacao contigua de 253 linhas (CLEAN_BODY_B71) que o b71_cb56c exige antes de substituir o corpo inteiro. Restaura a premissa que o docstring do b71_cb56c ja declara (:38-45). Glob: #44 antes de #47.
+patch_b71_callsite_trace.py	patch_b71_cb56c_reuse_block.py	injecta 63 blocos B71-CALLSITE-TRACE espalhados por todo o corpo de func_000B71B8 -- nenhuma comparacao contigua sobrevive. Mesma premissa do docstring do b71_cb56c. Glob: #46 antes de #47.
+#
+# ---------------------------------------------------------------------------
+# D4 -- as quatro relacoes que a PROVA DE CONVERGENCIA encontrou (2026-08-03)
+# ---------------------------------------------------------------------------
+# Com as cinco relacoes acima a 1a passagem ja aplica tudo, mas a 2a passagem
+# ainda mudava a arvore: 3 blocos de probe DUPLICADOS (FLIPPATH id=2 e id=3,
+# MENUPRESENT id=9). Causa medida: patch_flip_path_enter_probe.py:273 verifica
+# "ja injectei aqui?" numa janela FIXA de 160 caracteres a seguir a assinatura
+# da funcao (o menu_present usa 200, o postthr 320). Nas 3 funcoes afectadas --
+# func_000B71B8, func_002B2E74, func_002C0508 -- outros probes que correm
+# DEPOIS injectam na mesma entrada e empurram o marcador para fora da janela;
+# na passagem seguinte o patch ja nao se ve a si proprio e injecta outra vez.
+#
+# A causa RAIZ e' a janela fixa, nao a ordem -- a ordem so' a contorna, pondo
+# estes dois em ultimo, com o marcador deles no topo da funcao. Fica escrito
+# porque importa: qualquer probe NOVO que injecte na entrada destas funcoes
+# volta a partir isto. O fix estrutural (janela por funcao, nao por bytes) fica
+# para outra leva; nao se toca em patches nesta.
+patch_menu_present_schedule_probe.py	patch_postthr_pc_probe.py	POSTTHR-PROBE injecta na entrada de func_002C0508 e empurra MENUPRESENT id=9 para alem da janela de 200 chars (patch_menu_present_schedule_probe.py). Glob: #101 antes de #104.
+patch_menu_present_schedule_probe.py	patch_smpd_probe.py	SMPD-PROBE#FLAG injecta na entrada de func_002C0508, acima do POSTTHR. Glob: #101 antes de #109.
+patch_flip_path_enter_probe.py	patch_menu_present_schedule_probe.py	MENUPRESENT-PROBE injecta na entrada de func_000B71B8 e func_002B2E74, empurrando FLIPPATH para alem da janela de 160 chars. Tem de correr por ultimo dos dois. Glob: #91 antes de #101.
+patch_flip_path_enter_probe.py	patch_introseq_probe.py	INTROSEQ-PROBE injecta na entrada de func_000B71B8, acima do FLIPPATH. Glob: #91 antes de #96.
+patch_e90_f2b_natural_gate.py	patch_f2b_multimb_install.py	as 4 agulhas (f2b_stream_fill/ensure/eof_try_complete/pre_consume) sao o preambulo F2B que o instalador multi-MB escreve no chunk 001; sem ele o E90 recusa rc=2.
+patch_e90_f2b_natural_gate.py	patch_f2ba9bc_stream_align_install.py	a agulha `if (g_f2b_fill_mfd && g_f2b_fill_sz) {` e' a cabeca do bloco ALIGN/CLAMP que esse instalador escreve em func_002BA9BC; o E90 poe-lhe o gate (natural por default).
+patch_e90_f2b_natural_gate.py	patch_fios_f2b_open_block_install.py	agulha OPCIONAL: o `_pump=` do F2B-STREAM-PUMP no bloco do open (o instalador ja escreve o default OFF desde o E90; se for a forma antiga, o E90 corrige-a).
+patch_e96_b71_natural_icall.py	patch_b71_cb56c_reuse_block.py	as agulhas (replenish/reuse do icallA) sao o bloco que esse instalador escreve em func_000B71B8; o E96 poe-lhes o gate (natural por default).
+patch_e99_b71_full_393e0.py	patch_b71_cb56c_reuse_block.py	a agulha (HLE-lite do 393E0, PS3_B71_FULL_393E0) e' desse instalador; o E99 inverte o default (completo).
+patch_e131_movieio_release_on_close.py	patch_f2b_multimb_install.py	a agulha `f2b_fo_mfd_get` (static do preambulo host F2B) e escrita pelo instalador multi-MB; sem ele o E131 recusa "f2b_fo_mfd_get static nao encontrado" (medido no re-lift e162, 2026-09-02: glob poe e131 antes de f2b_).

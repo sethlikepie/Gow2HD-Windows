@@ -1,0 +1,6 @@
+# Extra sources for the workload-dispatch test: the dispatch layer itself.
+# spu_workload.c calls ps3_checkpoint_fire() (FIRST_SPU_JOB) -- $CHECKPOINT_SRC
+# is the shared trace+checkpoint source list from run_tests.sh (see the
+# comment there); test_workload_main.c stubs ps3_timebase_now() and the three
+# SNAPSHOT accessors ps3_checkpoint.c needs.
+EXTRA="$RUNTIME_SPU/spu_workload.c $CHECKPOINT_SRC"

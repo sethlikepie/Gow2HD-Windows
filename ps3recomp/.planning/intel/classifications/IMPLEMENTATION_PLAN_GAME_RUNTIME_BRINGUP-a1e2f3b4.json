@@ -1,0 +1,13 @@
+{
+  "source_path": "/Users/andrebrumcortezferreira/Documents/PESSOAL/ps3recomp/docs/IMPLEMENTATION_PLAN_GAME_RUNTIME_BRINGUP.md",
+  "type": "PRD",
+  "confidence": "high",
+  "manifest_override": true,
+  "title": "Plano de implementação: bring-up confiável do jogo recompilado",
+  "summary": "Ordered plan to bring the recompiled game (GoW2) from partial boot to stable execution through causal bring-up barriers.",
+  "scope": ["game runtime bring-up", "GoW2", "memory/heap", "threads/scheduler", "SPURS/SPU/DMA", "FIOS/WADs", "media/EOS", "RSX render/present", "input/menu/gameplay", "save/load"],
+  "cross_refs": [],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

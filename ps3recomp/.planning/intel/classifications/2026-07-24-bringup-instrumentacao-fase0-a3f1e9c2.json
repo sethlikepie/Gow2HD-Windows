@@ -1,0 +1,13 @@
+{
+  "source_path": "/Users/andrebrumcortezferreira/Documents/PESSOAL/ps3recomp/docs/superpowers/plans/2026-07-24-bringup-instrumentacao-fase0.md",
+  "type": "PRD",
+  "confidence": "high",
+  "manifest_override": true,
+  "title": "Plano de execução — Instrumentação comum + Fase 0 (bring-up do jogo recompilado)",
+  "summary": "Decomposes common instrumentation and Phase 0 baseline requirements for the recompiled game into executable tasks with global constraints and acceptance rules.",
+  "scope": ["instrumentation layer", "ps3_trace", "PS3_TRACE_* subsystems", "bring-up baseline", "macOS/arm64 target", "trace log format", "gating variables"],
+  "cross_refs": ["../../IMPLEMENTATION_PLAN_GAME_RUNTIME_BRINGUP.md"],
+  "locked": false,
+  "precedence": null,
+  "notes": "MANIFEST_TYPE=PRD applied per instructions, overriding heuristic classification. Document is a task-decomposition plan with global constraints (G1-G8) derived from a source implementation plan; contains requirement-like acceptance criteria (default-off behavior, no-regression, honesty-of-acceptance rules) consistent with PRD framing. No completion/status markers found in the read portion of the document."
+}

@@ -1,0 +1,95 @@
+{
+  "schema": "ps3recomp.baseline/1",
+  "jogo": "gow2",
+  "gerado_em": "2026-07-24T21:39:30Z",
+  "commit_engine": "6ec8f343d8b07fed3678531c20c34c6ac23d2fc5",
+  "commit_jogo": "28623e83a6a4b73d08f70894274e3a8c581f438e",
+  "binario": {
+    "path": "../gow2-recomp/boot_gow2",
+    "sha256": "01ef5fc56fdc194b3289d4315ca221e89df233bd4d837028f2610f1d76378b48",
+    "mtime": "2026-07-24T21:06:05Z"
+  },
+  "env": {
+    "PS3_CELLSYS_REORDER": "1",
+    "PS3_MOVIE_CACHE": "../gow2-recomp/movie_cache",
+    "PS3_MOVIE_EOS": "1",
+    "PS3_MOVIE_HLE": "1",
+    "PS3_MOVIE_IO": "1",
+    "PS3_NO_RSX": "1",
+    "PS3_NOMOVIES": "0",
+    "PS3_PAD_AUTOSTART": "1",
+    "PS3_RSX_BACKEND": "trace",
+    "PS3_RSX_FIFO": "1",
+    "PS3_SPU1": "1",
+    "PS3_TRACE_CHECKPOINTS": "1",
+    "PS3_TRACE_DMA": "1",
+    "PS3_TRACE_FIOS": "1",
+    "PS3_TRACE_HEAP": "1",
+    "PS3_TRACE_MEDIA": "1",
+    "PS3_TRACE_MEMORY": "1",
+    "PS3_TRACE_RSX": "1",
+    "PS3_TRACE_SNAPSHOT": "1",
+    "PS3_TRACE_SPURS": "1",
+    "PS3_TRACE_THREADS": "1",
+    "PS3_VDEC_ASYNC": "1",
+    "PS3_VFS_ROOT": "../gow2-recomp/extracted/USRDIR"
+  },
+  "runs": [
+    {
+      "idx": 1,
+      "duracao_s": 61.0,
+      "primeiro_erro": {
+        "tb": 2380073144,
+        "texto": "[PS3T] 2380073144 | 0x4D41494E | _Z13func_00263554P11ppu_context+0x1A8 | MEMORY | OOB | ea=0xFB788082 len=4 region=unmapped op=read",
+        "linha": 1104212
+      },
+      "ultimo_checkpoint": "FIRST_WAD_OPEN",
+      "oob": 26,
+      "imports_nao_resolvidos": 5,
+      "instrucoes_desconhecidas": null,
+      "threads_criadas": 14,
+      "jobs_spu": 355,
+      "wads_abertos": 2,
+      "frames_apresentados": 0
+    },
+    {
+      "idx": 2,
+      "duracao_s": 62.0,
+      "primeiro_erro": {
+        "tb": 2357228000,
+        "texto": "[PS3T] 2357228000 | 0x4D41494E | _Z13func_00263554P11ppu_context+0x1A8 | MEMORY | OOB | ea=0xFB788082 len=4 region=unmapped op=read",
+        "linha": 1429196
+      },
+      "ultimo_checkpoint": "FIRST_WAD_OPEN",
+      "oob": 26,
+      "imports_nao_resolvidos": 5,
+      "instrucoes_desconhecidas": null,
+      "threads_criadas": 14,
+      "jobs_spu": 355,
+      "wads_abertos": 2,
+      "frames_apresentados": 0
+    },
+    {
+      "idx": 3,
+      "duracao_s": 61.0,
+      "primeiro_erro": {
+        "tb": 2359415797,
+        "texto": "[PS3T] 2359415797 | 0x4D41494E | _Z13func_00263554P11ppu_context+0x1A8 | MEMORY | OOB | ea=0xFB788082 len=4 region=unmapped op=read",
+        "linha": 1549987
+      },
+      "ultimo_checkpoint": "FIRST_WAD_OPEN",
+      "oob": 26,
+      "imports_nao_resolvidos": 5,
+      "instrucoes_desconhecidas": null,
+      "threads_criadas": 14,
+      "jobs_spu": 357,
+      "wads_abertos": 2,
+      "frames_apresentados": 0
+    }
+  ],
+  "barreira": {
+    "igual_nos_runs": true,
+    "descricao": "3 run(s) pararam em ultimo_checkpoint='FIRST_WAD_OPEN' (erro em: '[PS3T] 2380073144 | 0x4D41494E | _Z13func_00263554P11ppu_context+0x1A8 | MEMORY | OOB | ea=0xFB788082 len=4 region=unmapped op=read')",
+    "variacao_explicada": null
+  }
+}

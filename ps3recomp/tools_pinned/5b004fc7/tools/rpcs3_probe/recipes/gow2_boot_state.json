@@ -1,0 +1,6 @@
+[
+  {"op": "attach", "label": "boot-attach",
+   "_note": "captures the already-stopped state RPCS3 hands us; the async-interrupt snapshot op does not work against RPCS3's stub"},
+  {"op": "mem", "addr": "0x0053FCF0", "len": 4, "label": "toc-slot-1488"},
+  {"op": "mem", "addr": "0x008691A8", "len": 8, "label": "wall-struct-+0-+4"}
+]

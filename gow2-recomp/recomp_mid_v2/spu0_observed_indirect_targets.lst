@@ -1,0 +1,3 @@
+# Real GoW2 workload observation. The build contract rejects a lift that does
+# not register every address listed here before it can silently abort in-game.
+target 0x391C

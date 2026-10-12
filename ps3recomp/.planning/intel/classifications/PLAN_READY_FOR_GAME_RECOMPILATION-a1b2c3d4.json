@@ -1,0 +1,20 @@
+{
+  "source_path": "/Users/andrebrumcortezferreira/Documents/PESSOAL/ps3recomp/docs/PLAN_READY_FOR_GAME_RECOMPILATION.md",
+  "type": "PRD",
+  "confidence": "high",
+  "manifest_override": true,
+  "title": "Plano-delta: tornar o ps3recomp pronto para recompilar um jogo",
+  "summary": "Master delta plan defining tracks and acceptance criteria to close the gap toward a verifiable PS3 game recompilation pipeline.",
+  "scope": ["ps3recomp", "PPU/SPU lifters", "RSX/GCM", "SPURS scheduler", "macOS Metal stack", "CI/CTest", "recompilation pipeline"],
+  "cross_refs": [
+    "IMPLEMENTATION_PLAN_RECOMP_RELIABILITY.md",
+    "2026-07-23-00-gow2-playable-master-INDEX.md",
+    "2026-07-21-00-macos-metal-stack-INDEX.md",
+    "docs/superpowers/plans/2026-07-24-*-rdy<N>-*.md",
+    "CLAUDE.md",
+    ".superpowers/sdd/progress.md"
+  ],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

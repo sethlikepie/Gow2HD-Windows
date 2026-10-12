@@ -1,0 +1,13 @@
+{
+  "source_path": "/Users/andrebrumcortezferreira/Documents/PESSOAL/ps3recomp/docs/PLATFORM_ABSTRACTION.md",
+  "type": "ADR",
+  "confidence": "high",
+  "manifest_override": true,
+  "title": "Platform Abstraction Layer",
+  "summary": "Documents the design decision to use inline #ifdef platform switches instead of a separate abstraction layer, plus per-subsystem Windows/POSIX API mappings.",
+  "scope": ["threading", "synchronization primitives", "networking", "timers and clocks", "memory management", "audio", "input", "cryptographic RNG", "filesystem differences", "fiber/coroutine support", "Windows", "POSIX", "Linux", "macOS"],
+  "cross_refs": [],
+  "locked": false,
+  "precedence": null,
+  "notes": "MANIFEST_TYPE=ADR is authoritative; type inference skipped. No explicit status field (Accepted/Proposed) found in scanned content, so locked left false rather than assumed true."
+}

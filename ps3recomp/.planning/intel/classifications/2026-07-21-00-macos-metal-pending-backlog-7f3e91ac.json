@@ -1,0 +1,25 @@
+{
+  "source_path": "/Users/andrebrumcortezferreira/Documents/PESSOAL/ps3recomp/docs/superpowers/plans/2026-07-21-00-macos-metal-pending-backlog.md",
+  "type": "PRD",
+  "confidence": "high",
+  "manifest_override": true,
+  "title": "Backlog — o que falta implementar / portar para Metal (macOS)",
+  "summary": "Open D3D12-to-Metal gap backlog: vtable callbacks, extras, decompilers, and media/audio items still pending, mapped to plans M0-M10.",
+  "scope": ["rsx_backend vtable", "Metal backend", "D3D12 parity gap", "MSL decompilers (fp/vp)", "movie overlay HLE", "cellVdec present", "content hold HOSTRES", "zero-copy IOSurface", "audio AudioQueue", "M0-M10 plan sequencing"],
+  "cross_refs": [
+    "2026-07-21-00-macos-metal-stack-INDEX.md",
+    "2026-07-21-macos-videotoolbox-metal-overlay.md",
+    "2026-07-21-macos-metal-rsx-draw-path.md",
+    "2026-07-21-macos-metal-shader-msl.md",
+    "2026-07-21-macos-metal-bind-texture.md",
+    "2026-07-21-macos-metal-iosurface-zerocopy.md",
+    "2026-07-21-macos-metal-pipeline-state.md",
+    "2026-07-21-macos-metal-vertex-attribs.md",
+    "libs/video/rsx_commands.h",
+    "libs/video/rsx_d3d12_backend.c",
+    "libs/video/rsx_metal_backend.m"
+  ],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

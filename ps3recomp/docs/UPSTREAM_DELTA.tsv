@@ -1,0 +1,38 @@
+# UPSTREAM_DELTA.tsv -- inventario do delta upstream->nos (Fase 22 / UPST-01)
+# NUNCA editar as linhas `#` a mao: sao medidas. Regenerar com `measure`.
+# regenerar cabecalho: .venv/bin/python3 tools/upstream_delta.py measure --tsv docs/UPSTREAM_DELTA.tsv
+# validar (gate de ancoras/vocabulario): .venv/bin/python3 tools/upstream_delta.py validate --tsv docs/UPSTREAM_DELTA.tsv
+# medido_em=2026-08-12
+# fetch=nao
+# ramo_upstream=upstream/fix/fold-merge-dropped-fixes
+# ramo_head_sha=ee97d01
+# ramo_head_data=2026-08-09
+# delta_commits=461
+# comando=git rev-list --count HEAD..upstream/fix/fold-merge-dropped-fixes
+# nosso_head=65d6675
+# nosso_delta_commits=1051
+# master_congelado=25e5efe (2026-07-16) -- NAO e' a base de comparacao: esconde 227 commits que o ramo vivo ja tem
+# nivel_evidencia=medido
+#
+# HONESTIDADE (ler antes de consumir este ficheiro):
+# - `adoptar` significa "entra pelo portao da Fase 23+", NAO "ja foi adoptado".
+#   O estado de adopcao e' das fases seguintes; este ficheiro nao o simula.
+# - Quando um bloco for adoptado a ancora nossa MUDA (o codigo muda) e a linha tem
+#   de ser RE-ANCORADA -- e' exactamente para isso que existe o gate de deriva
+#   (ANCORA_PROVA/ANCORA_DESLOCADA). Caso ja previsto: a Fase 23 altera
+#   runtime/syscalls/lv2_register.c:825-826 e essa linha ficara vermelha ate ser
+#   re-ancorada (`validate --fix-anchors` reescreve o numero da linha).
+# - `evidencia` e' por linha: `medido` = sha resolvido e ancora aberta e lida;
+#   `nao-exercitado` = a afirmacao nao foi corrida por nos. Nenhum aceite in-boot
+#   e' reclamado por este ficheiro.
+area	sha_upstream	ramo_upstream	caminho_upstream	ancora_nossa	ancora_prova	decisao	fase_destino	evidencia	razao
+LV2S	dd936c4,a984880	upstream/fix/fold-merge-dropped-fixes	runtime/syscalls/lv2_register.c	runtime/syscalls/lv2_register.c:844	vm_write_be32(seg + 0x14, src_ea + p_off)	adoptar	23	medido	Escrevemos o EA de origem do segmento como par u64 BE (+0x10=0 / +0x14=addr), mas sys_spu_segment.src e' um u32 EA em +0x10: um leitor fiel faz read32(seg+0x10) e apanha 0 -> DMA de NULL -> LS vazio. O upstream poe o addr em +0x10 e mantem +0x14 (inofensivo para quem leia u64-lo). dd936c4 e a984880 sao o mesmo patch em duas linhagens.
+SPUI	aa3a85a,a88076e,8440ee0	upstream/fix/fold-merge-dropped-fixes	runtime/spu/spu_interp.c,runtime/spu/spu_lockstep.c	runtime/spu/spu_workload.h:6	We do not interpret SPU ELFs at runtime	adoptar	24	medido	O nosso header declara a escolha de desenho: nao interpretamos ELFs SPU, liftamos estaticamente por FINGERPRINT. Quando o titulo regista uma imagem SPU que nao esta pre-liftada, nao ha' caminho -- o upstream tem interpretador (aa3a85a), corre grupos de threads nao liftados (a88076e) e traz o portao de lockstep env-gated (8440ee0) para comparar interp vs lift. E' capacidade que nos falta, nao alternativa.
+GCMF	684dd71,0fcba98,f8ee763	upstream/fix/fold-merge-dropped-fixes	libs/video/cellGcmSys.c	libs/video/cellGcmSys.c:1623	vm_write32(GCM_CTRL_EA + 8, val)	adoptar	25	medido	Publicamos a fence do RSX quando processamos o metodo NV406E SET_REFERENCE no FIFO (escrita write-driven em GCM_CTRL_EA+8). O upstream publica read-driven (684dd71: GCM_REFPOLL no ponto em que o titulo faz poll) e drena o FIFO por eventos (0fcba98), com f8ee763 a juntar reload de policy module na troca de fila. Fecha a lacuna GCMF do marco.
+SPRS	b774c17,76f80b4	upstream/fix/fold-merge-dropped-fixes	docs/FIRMWARE_LLE.md,tools/lift_prx.py,fw_spu/spu_libsre/	libs/spurs/spurs_kernel.c:120	static void kernel_loop(void)	já-temos	26	nao-exercitado	Temos SPURS por HLE escrito a mao (kernel_loop nosso). A via LLE deles -- relocar o libsre.prx desencriptado e lifta-lo (b774c17 traz docs/FIRMWARE_LLE.md + tools/lift_prx.py; os lifts de fw_spu/spu_libsre/ entram em 76f80b4) -- e' uma ALTERNATIVA, nao uma lacuna. Esta linha NAO decide a substituicao: o veredicto PROMOTE/HOLD e' o SPRS-01 na Fase 26.
+LIFT	6bc76ae	upstream/fix/fold-merge-dropped-fixes	tools/ppu_lifter.py	tools/ppu_lifter.py:1784	ctx->lr = 0x	já-temos	-	medido	`bl` escrever ctx->lr (LR = endereco de retorno) e' uma das TRES correccoes que o upstream perdeu num fold merge e RESTAUROU em 6bc76ae (2026-08-09). Nos ja a tinhamos. Nao reinvestigar.
+LIFT	6bc76ae	upstream/fix/fold-merge-dropped-fixes	tools/ppu_lifter.py	tools/ppu_lifter.py:1522	TOCFIX ld r2,N(r1)	já-temos	-	medido	Lowering do `ld r2,N(r1)` para o literal do TOC (segunda das tres correccoes restauradas em 6bc76ae). Guardada em TOC unico; o par que a arma vive em tools/ppu_lifter.py:4859 (`if len(toc_candidates) == 1`). Nos ja a tinhamos. Nao reinvestigar.
+LIFT	6bc76ae	upstream/fix/fold-merge-dropped-fixes	tools/ppu_lifter.py	tools/ppu_lifter.py:1528	base_expr = "0" if str(base) == "0"	já-temos	-	medido	Regra rA=0 do D-form (base literal 0 em vez de ctx->gpr[0]) -- terceira correccao restaurada em 6bc76ae. Anotada aqui no caminho de load/store de virgula flutuante; o par no store fica em tools/ppu_lifter.py:1984 e os do inteiro em :1465/:1500/:1530/:1571. Nos ja a tinhamos. Nao reinvestigar. NOTA: o plano apontava :1943, a linha medida e' :1944.
+ORACLE	2e539fc	upstream/fix/fold-merge-dropped-fixes	tools/rpcs3_probe/	tools/rpcs3_probe/selftest.py:1	exercise the RPCS3 oracle client	já-temos	-	medido	Os dois lados tem oraculo RPCS3: o deles em 2e539fc (scripts de introspeccao), o nosso aterrou em 1096c6d com selftest 57/57 (selftest.py nao existe do lado deles). E o E81 mediu que o oraculo NAO arbitra a parede da intro: contador 0x592668 parado em 2 em tres corridas independentes, contra o nosso st620 em 3 -- a referencia esta um degrau ATRAS de nos. Nao ha' aqui `como o hardware faz` para copiar.
+TOOLS	76f80b4	upstream/fix/fold-merge-dropped-fixes	tools/compare/	games/gow2/README.md:3	(PS3, `NPUA80491`)	rejeitar	-	medido	O tools/compare/ deles compara um build de Xbox 360 contra o build PS3 do mesmo jogo. O GoW2 HD e' um port PS2->PS3 e NAO tem build de 360, logo a premissa da ferramenta nao se aplica a este port. Rejeitado por inaplicabilidade, nao por qualidade.
+LIFT	ee97d01c16685e3b963c4bfc88053bb20831c304	upstream/fix/fold-merge-dropped-fixes	tools/ppu_lifter.py	tools/ppu_lifter.py:3942	r_base_cands: list[str] = []	contribuir-de-volta	-	medido	RE-MEDIDO no Plano 22-02 contra a cabeca do ramo vivo (ee97d01, tools/ppu_lifter.py:3011-3229, recorte verbatim em tools/upstream_jt_snapshot.py). A frase historica do PR #82 (`first TOC-loaded operand wins`) e' LARGA DEMAIS para o codigo de hoje: eles ja' reordenam os candidatos por um `add` que combine o valor carregado com um dos operandos do lwzx, logo a forma de OFFSETS ja' resolve bem dos dois lados e o vector antigo deixou de discriminar (fica no teste como CONTROLO). O defeito residual e' mais estreito: sem `add` (tabela ABSOLUTA) a reordenacao nao tem por onde pegar, eles fixam o primeiro candidato com definicao TOC-relativa com `break` e nunca contam alvos validados -- se o indice tambem vier do TOC, a base lida e' a errada e o dispatcher inteiro e' descartado. Raiz comum: o registo-base e' ESCOLHIDO em vez de ARBITRADO por contagem de alvos validados (eles ja' arbitram assim, mas so' entre candidatos a TOC). Medido: VECTOR A nosso=[0x13000,0x13004,0x13008] deles=None; VECTOR B (controlo) ambos=[0x11100,0x11200]. Patch que aplica limpo neste sha e corrige o lado deles (git apply --check rc=0, PATCHED_OK, 6 vectores sem regressao) em docs/upstream-contrib/. Nivel de evidencia: offline-unit; SEM PR aberto e sem push para sp00nznet -- a aceitacao pelo upstream nao e' criterio.

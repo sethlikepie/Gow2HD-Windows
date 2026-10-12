@@ -1,0 +1,13 @@
+{
+  "source_path": "/Users/andrebrumcortezferreira/Documents/PESSOAL/ps3recomp/docs/SYSCALLS.md",
+  "type": "DOC",
+  "confidence": "high",
+  "manifest_override": true,
+  "title": "LV2 Kernel Syscall Reference",
+  "summary": "Reference documentation for all implemented PS3 LV2 kernel syscalls and their Windows/POSIX host mappings in ps3recomp.",
+  "scope": ["LV2 kernel syscalls", "PPU threads", "mutex", "condition variables", "semaphores", "rwlocks", "lwmutex", "lwcond", "event queues", "event flags", "timers", "memory management", "sys_mmapper", "filesystem", "interrupts", "SPU management", "PRX module management"],
+  "cross_refs": [],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

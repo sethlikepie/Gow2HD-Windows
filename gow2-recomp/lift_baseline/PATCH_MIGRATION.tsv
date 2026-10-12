@@ -1,0 +1,236 @@
+# PATCH_MIGRATION.tsv -- ledger de migracao patch->mecanismo (Fase 16 / LEDG-01)
+# regenerar esqueleto: .venv/bin/python3 games/gow2/lift_baseline/gen_migration_ledger.py --merge games/gow2/lift_baseline/PATCH_MIGRATION.tsv -o games/gow2/lift_baseline/PATCH_MIGRATION.tsv
+# COLUNAS HUMANAS (nao sobrescrever no regen se --merge): alvo, prioridade, aceite, estado
+# COLUNAS DERIVADAS (recalculadas sempre): patch, classe, ea (heuristica, so' quando CONFIRMADA pelo corpo do script), ea_pista_nome (candidato lido do nome e NAO confirmado -- verificar antes de usar), subclasse_catalogo, so_no_build, marcador
+# baseline contagens (2026-08-03, medidas nesta corrida):
+#   patch_*.py monorepo (games/gow2/recomp_mid_v2) = 140
+#   patch_*.py build    (../gow2-recomp/recomp_mid_v2) = 140
+#   PATCH_CATALOG linhas de dados = 140
+#   linhas de dados deste ledger = 140 (CORRECTNESS=74 / PROBE=54 / OPD=10 / OBSOLETE=2)
+#   EA CONFIRMADA pelo corpo do script = 79/140; destas restantes, 14 trazem pista nao confirmada em ea_pista_nome (sem EA verificada nao ha' midasm/weak, logo nao ha' P0)
+#   divergencia build-monorepo = 140 - 140 = 0 (espelho subtree em dia nesta corrida -- a divida do v1.0 nao aparece nesta medicao; nao e' uma afirmacao sobre o conteudo dos ficheiros, so' sobre a contagem)
+# baseline verify_lift (2026-08-02, UMA corrida, medido [nivel de evidencia: offline-unit]):
+#   LIFT=../gow2-recomp/recomp_macos_v2 (producao: default de build_macos.sh e apply_all_patches.sh)
+#   LIFT_SHA256=73c8abd21abb17e829fc4186b55a5b2395a3d0e4b4f8019bf6bd8e8cc901ae7f  (cat ppu_recomp_*.cpp)
+#   cmd=PS3_ENGINE_ROOT=$(pwd) ./games/gow2/verify_lift.sh ../gow2-recomp/recomp_macos_v2
+#   rc=0  (lift_parity=PASS MANIFEST=PASS audit_boundaries=PASS)
+#   deltas=lift_parity current=77 baseline=77 novos=0 resolvidos=0 | MANIFEST_DEBT current=0 baseline=36 novos=0 resolvidos=36 | audit_boundaries current=180 baseline=180 novos=0 resolvidos=0
+#   log=/tmp/m0_fase16_verify_lift.log (FORA dos repos, G6 -- nao versionado)
+#   notas=verde a' primeira, sem re-corrida e sem VERIFY_ORACLE (isso e' Fase 20). A divida MANIFEST congelada (36) aparece toda como resolvida neste lift: o gate passa por delta, nao por limiar
+# baseline smoke intro (2026-08-02, UMA corrida, medido [nivel de evidencia: in-boot]):
+#   bin=../gow2-recomp/boot_gow2 (mtime 2026-07-29 15:07; NAO reconstruido nesta corrida)  LIFT=recomp_macos_v2 (producao) -- RESSALVA MEDIDA: 5 dos 7 ppu_recomp_*.cpp sao MAIS RECENTES que o binario (31/jul vs 29/jul), logo este smoke NAO exercita o lift que o verify_lift acima verificou
+#   recipe=env_gow2.sh + PS3_NO_RSX=1 PS3_RSX_BACKEND=trace PS3_PERF_FSM=1 PS3_MOVIE_EOS=0; PS3_TRACE_* limpos; probes OFF  duration_s=25  kill=PID (TERM, depois -9) -- nunca pkill -f; orfaos pos-run = 0
+#   st620_max=11  (sequencia observada 0->1->3->3->11->11, overlay_done=1; o sentinela 4294967295 = 0xFFFFFFFF fica FORA do max, por smoke_m0_baseline.sh)
+#   sticky_hits=NAO-OBSERVAVEL -- ps3_fios_sticky_publish/peek/consume nao imprimem nada (zero fprintf com 'sticky' em runtime/ e libs/), por isso um grep daria sempre 0 e 0 NAO significa 'sticky morto'. Metrica sem emissor, nao metrica a zero
+#   oob_or_ffff_hits=0  (ausencia REAL: zero ocorrencias de 'OOB' ou '0xFFFF' em 3707 linhas; o log termina em [CONTENT] boot logo queue DONE, sem crash)
+#   bytes_read=NAO-OBSERVADO -- os 3 emissores (trace dump, close stats, GATE-FORCE R_PermA full) nao dispararam em 25s com MOVIE_EOS=0: o unico [movieio] open foi o gow2.psarc, o R_PermA nao chegou a ser lido. Logo o aceite smoke:bytes_read=20169344 de patch_fallthrough_2550c8.py CONTINUA nao-exercitado
+#   log=/tmp/m0_fase16_smoke.log (231805 bytes, FORA dos repos, G6 -- nao versionado)
+#   notas=UMA corrida, sem retry (nao houve falha de vm commit). 52068 lifted functions. st620_max=11 esta' acima do gate >=3 do CLAUDE.md. Para a Fase 21 comparar como deve ser, o smoke tera' de ser refeito sobre um binario reconstruido do lift corrente
+# dominio: classe in {CORRECTNESS,PROBE,OPD,BUILD,OBSOLETE} (BUILD reservado, hoje sem ocorrencias) | alvo in {midasm,weak,switch_table,invalid_insn,lifter,runtime,keep-probe,delete} | prioridade in {P0,P1,P2} | estado in {todo,migrated,redundant,wont}
+# alvo=lifter (dominio alargado na Fase 17 / plano 17-03): o defeito e' de TRADUCAO e o fix pertence ao tools/ppu_lifter.py -- nem hook host, nem runtime, nem tabela declarada no TOML. Envolve-lo num mid-asm esconderia um bug do lifter atras de codigo host, e o proprio plano de origem manda o contrario: 'preferir fix no lifter se sistematico'.
+#   patch_fallthrough_2550c8.py: RECLASSIFICADO de alvo=midasm para alvo=lifter nesta fase. A causa medida e' um fallthrough cross-fragment ERRADO -- func_002550C8 caia em func_002550E8 em vez de func_00255178.
+#   Continua estado=todo e P0: a reclassificacao corrige o MECANISMO, nao declara o trabalho feito. A auditoria sistematica do padrao (alvo com EA guest MENOR que o site) esta' na lista P1 do CLAUDE.md e nao e' da Fase 17.
+# estado=redundant (dominio alargado na Fase 18 / plano 18-03): o mecanismo ja' produz o aceite SEM o patch e sem qualquer declaracao -- logo nao houve migracao nenhuma, descobriu-se que o patch nao era preciso. E' distinto de `migrated` (o patch era necessario e o mecanismo passou a fazer o trabalho) e de `wont` (decidiu-se nao migrar). A distincao existe para a metrica: um `redundant` NAO conta para os >=3 fixes re-lift-safe do XEN-05; contam-se em separado e a Fase 21 mede os dois numeros.
+# subclasse=jumptable (CLASSIFICADA na Fase 18 / plano 18-03, por medicao numa escada A/B/C sobre dois re-lifts completos da MESMA EBOOT):
+#   (A) re-lift SEM patch e SEM --config: os dois aceites grep do ledger ja' saem emitidos, e nao por acaso -- o `case` cai dentro do switch da funcao certa (func_002A209C e func_002B11B8) com 54 e 22 alvos distintos, os MESMOS numeros que os proprios patches instalariam (54/54 e 22/22, oraculo do 18-02), e com `default: ps3_indirect_call(ctx); return;`. O discover_jump_tables encontra as duas tabelas sozinho => estado=redundant nos dois.
+#   (B) re-lift SEM patch e COM --config (as duas tabelas declaradas em games/gow2/config/gow2_switch_tables.toml): identico ao (A), 54 e 22. A declaracao nao e' load-bearing hoje; e' rede. Como (A) ja' passa, a regra do 18-CONTEXT manda `redundant` e NAO `migrated` -- inflar aqui seria contar como fix re-lift-safe um patch que nunca foi preciso.
+#   (C) correr o patch por cima do lift (B): patch_jumptable_2a209c.py verifica os 54 alvos e imprime 'nada a injectar' (rc=0, SHA256 do chunk IGUAL byte a byte) -- e' ja' um verificador idempotente. Ha' RESSALVA no 2b11b8: ver a nota seguinte.
+#   RESSALVA MEDIDA (patch_jumptable_2b11b8.py): ao contrario do 2a209c, este NAO e' no-op no passo (C) -- ainda substitui o calculo do CTR (a leitura de TOC-0x151C na memoria guest) por uma tabela hardcoded. O switch fica intacto e nao ha' dupla injeccao, mas esse residuo NAO e' a jump table e portanto NAO esta' coberto pelo veredicto `redundant`, que se refere ao `aceite` desta linha (alvo=switch_table). Medido estaticamente na EBOOT: [TOC-0x1694] = 0x002A2134 e [TOC-0x151C] = 0x002B1228 -- exactamente as bases que os patches hardcoded usam, ou seja a leitura que o lift faz esta' correcta NA IMAGEM. Isso enfraquece muito a hipotese original ('ICALL-BAD ctr=0x27182818') mas NAO a refuta em runtime. Por isso o ficheiro NAO foi tocado nem apagado: o lift de producao recomp_macos_v2 ainda leva este patch aplicado (marcador 'Task4 FIX' presente) e remover o residuo exige um A/B IN-BOOT no caminho do typemap/WAD, que o smoke de intro de 25s nao exercita.
+# alvo=midasm+weak (dominio alargado na Fase 19 / plano 19-03): UM patch pode precisar de DOIS mecanismos.
+#   patch_ce03c_introseq_block.py e' o caso: o [[midasm_hook]] Ce03cWaitIdle (Fase 17) carrega o wait-idle, e o
+#   [[functions_override]] 0x000CE03C (Fase 19) carrega o pad de setjmp/longjmp que ENVOLVE o corpo natural.
+#   Nao e' redundancia -- sao metades diferentes do mesmo patch, e a segunda estava MEDIDA em falta (WINDOWS #8).
+#   Os dois compoem-se na mesma funcao: o corpo emitido (PPC_FUNC_IMPL, simbolo __imp_) leva a chamada do mid-asm
+#   na primeira linha, e o override host chama esse __imp_ de dentro do setjmp -- o wait-idle corre UMA vez.
+# alvo RECLASSIFICADO na Fase 19 / plano 19-03 (o mecanismo estava errado, nao o trabalho):
+#   patch_b71_2f3f0_guard.py: midasm -> weak. Um [[midasm_hook]] corre AO LADO de uma instrucao; este guard precisa
+#   de (a) RETURN ANTECIPADO quando r4 nao e' ponteiro plausivel e (b) TECTO no loop, que exige mudar a condicao do
+#   salto de volta ao topo. Nenhuma das duas cabe num mid-asm. Medido, nao deduzido: o override esta' escrito e o
+#   contrato weak-2f3f0 corre verde num re-lift SEM o patch.
+# CONTAGEM CONGELADA PARA A FASE 21 (medida no plano 19-03, 2026-08-02) -- as DUAS leituras, como o 19-CONTEXT manda:
+#   classe=CORRECTNESS e estado=migrated ............................ 4 LINHAS
+#     patch_ce03c_introseq_block.py (0x000CE03C, midasm+weak)
+#     patch_ce03c_movie_done_reset.py (0x000CE03C, midasm -- subsumido pelo hook Ce03cWaitIdle)
+#     patch_b71_2f3f0_guard.py (0x0002F3F0, weak)
+#     patch_fios_play_already_active.py (0x002C0498, weak)
+#   por MECANISMO, leitura CONSERVADORA (uma funcao = um mecanismo; e' a regra da Fase 18, que contava as duas
+#   linhas do CE03C como 1 porque o hook subsume o movie_done_reset) ... 3 MECANISMOS
+#     func_000CE03C (mid-asm + pad weak, o mesmo alvo) | func_0002F3F0 (weak) | func_002C0498 (weak)
+#   por DECLARACAO no gow2_recomp.toml (cada seccao = um mecanismo) ..... 4 MECANISMOS
+#     [[midasm_hook]] Ce03cWaitIdle | [[functions_override]] 0x000CE03C | 0x0002F3F0 | 0x002C0498
+#     (o [[functions_override]] 0x00010230 do 19-02 e' o piloto de IDENTIDADE e NAO conta: nao migra patch nenhum)
+#   classe=OPD e estado=migrated ..................................... 0 (ver a nota seguinte)
+#   estado=redundant ................................................. 2 (as duas jumptables da Fase 18; NAO contam)
+#   Ou seja: o XEN-05 (>=3 fixes CORRECTNESS re-lift-safe) fecha nas TRES leituras -- 4 linhas, 3 ou 4 mecanismos.
+# PORQUE OS P0 classe=OPD com alvo=weak NAO foram migrados na Fase 19 (achado medido, nao desistencia):
+#   patch_14b1f0_opd.py (0x0014B1F0), patch_32e200_opd.py (0x0032E200), patch_factory_opd_gate.py (0x0039E6B4) e a
+#   reserva P1. A conversao OPD e' cirurgia NO INTERIOR da funcao -- troca a sequencia ctr/r2 + ps3_indirect_call por
+#   ps3_call_opd em N sitios (12 sitios em 0x0014B1F0, 7 em 0x0032E200). Um weak override substitui a funcao INTEIRA
+#   e nao ve o interior: a unica forma de o fazer com este mecanismo seria reescrever a funcao toda em codigo host --
+#   0x0014B1F0 tem 0xC3C bytes, 783 instrucoes. Isso nao e' uma migracao, e' uma reescrita, e congelava o corpo do
+#   jogo contra o proprio re-lift que a fase existe para tornar seguro. O `alvo=weak` destas linhas fica portanto
+#   POR REVER (candidato natural: uma opcao do lifter que converta OPD por declaracao, nao um hook host).
+# RECLASSIFICACAO 2026-08-03 (ramo 2b de gen_catalog.py) -- 4 linhas passam de classe=CORRECTNESS a classe=PROBE:
+#   patch_218364_pool_null_gate.py, patch_24e3d0_null_product_gate.py, patch_254610_empty_list_gate.py, patch_2547f8_empty_list_gate.py.
+#   A coluna `classe` deste ledger e' DERIVADA do PATCH_CATALOG.tsv -- a decisao esta la', com a medicao: os quatro auto-declaram-se
+#   "GATE DE DIAGNOSTICO (nao e' um fix)" e injectam codigo atras de uma env var OFF por omissao. O caso que abriu a questao:
+#   patch_24e3d0_null_product_gate.py exige count(agulha)==1 por chunk e a agulha aparece 38 vezes -- em recomp_macos_v5promo, em
+#   recomp_macos_v4ord E em recomp_macos_v2 (PRODUCAO). Falha IDENTICA contra a producao, logo nao e' divida de re-lift nem regressao
+#   de candidato nenhum; o marcador 24E3D0-NULLPROD-GATE nunca entrou no MANIFEST.tsv. O patch NAO foi corrigido nem apagado -- so' a
+#   classificacao estava errada. Os outros 3 estavam APPLIED na etapa 4 de 2026-08-03: saem do gate por CLASSE, nao por falharem.
+#   O `alvo=keep-probe` destas 4 linhas e' o default derivado para classe=PROBE, nao uma decisao humana nova.
+# mapa classe (derivado, ver 16-RESEARCH.md e o docstring de gen_migration_ledger.py):
+#   PROBE+orfao-sem-fonte->OBSOLETE | PROBE->PROBE | FUNCIONAL+opd->OPD | FUNCIONAL->CORRECTNESS
+# alvo/prioridade/aceite vazios = decisao humana pendente (plano 16-02).
+# aceite tem de ser executavel: grep:<padrao> | contract:<id CONTRACTS.tsv> | smoke:<metrica>. 'verificar manualmente' e' proibido.
+# classificacao humana (2026-08-03, DERIVADA das 4 colunas humanas, recontada a cada regen): N_classificados=20 N_P0=7 N_P1=12 N_P2=1
+#   (+1 face a Fase 16: patch_fios_play_already_active.py foi classificado no plano 19-03 -- CORRECTNESS/weak/P1 -- e migrado no mesmo plano)
+# criterio das linhas classificadas (plano 16-02, decidido a mao):
+#   (a) os candidatos de maior impacto nomeados pelo ROADMAP (fallthrough 2550C8, jumptables 2A209C/2B11B8, CE03C, factory OPD / ICG ctor, host inflate);
+#   (b) toda a familia classe=OPD com EA confirmada -- e' a unica com contratos ja' escritos em CONTRACTS.tsv, logo com aceite executavel HOJE;
+#   (c) linhas CORRECTNESS cujo marcador tem dono unico em CONTRACTS.tsv ou cujo marcador exclusivo foi medido presente no lift de producao.
+# criterio P0 (os TRES, 16-CONTEXT.md): classe in {CORRECTNESS,OPD} E toca o caminho de boot medido (intro -> WAD -> typemap) E `ea` CONFIRMADA (0x..., coluna derivada). `ea='-'` limita a P1 mesmo quando o corpo do script nomeia a funcao -- escrever `ea` a mao quebraria o regen.
+# piloto sugerido Fase 17 (mid-asm): (nenhum P0 com alvo=midasm ainda)
+# piloto sugerido Fase 18 (jtable):  patch_jumptable_2a209c.py, patch_jumptable_2b11b8.py
+patch	classe	alvo	ea	prioridade	aceite	estado	ea_pista_nome	subclasse_catalogo	so_no_build	marcador
+patch_146cb8_autoload_creator_probe.py	PROBE	keep-probe	0x00146CB8			todo		diagnostico	0	
+patch_14a01c_opd.py	OPD	weak	0x0014A01C	P1	contract:opd-14a01c-a	todo		opd	0	
+patch_14b1f0_opd.py	OPD	weak	0x0014B1F0	P0	contract:opd-14b1f0	todo		opd	0	[WADLD-BATCH]
+patch_17acc_enter_probe.py	PROBE	keep-probe	0x00017ACC			todo		diagnostico	0	[PS3_17ACC_FN_N]
+patch_1856a8_stream_opd.py	OPD	weak	0x001856A8	P1	contract:tag-stream-opd	todo		opd	0	[STREAM-OPD]
+patch_218340_pool_index_probe.py	PROBE	keep-probe	-			todo	0x00218340	diagnostico	0	
+patch_218364_pool_null_gate.py	PROBE	keep-probe	-			todo	0x00218364	diagnostico	0	
+patch_220284_copyloop_probe.py	PROBE	keep-probe	0x00220284			todo		diagnostico	0	
+patch_227788_allocsrc_probes.py	CORRECTNESS		0x00227788			todo		misc	0	
+patch_227788_sizeclass_probe.py	PROBE	keep-probe	0x00227788			todo		diagnostico	0	
+patch_242c94_state_dispatch_probe.py	PROBE	keep-probe	0x00242C94			todo		diagnostico	0	
+patch_24d5bc_walker_probe.py	PROBE	keep-probe	0x0024D5BC			todo		diagnostico	0	
+patch_24e198_r21_origin_probe.py	PROBE	keep-probe	0x0024E198			todo		diagnostico	0	
+patch_24e22c_arg_chain_probe.py	PROBE	keep-probe	-			todo	0x0024E22C	diagnostico	0	
+patch_24e2d4_typetag_probe.py	PROBE	keep-probe	-			todo	0x0024E2D4	diagnostico	0	
+patch_24e3d0_null_product_gate.py	PROBE	keep-probe	0x0024E3D0			todo		diagnostico	0	
+patch_2545b0_entry_probe.py	PROBE	keep-probe	0x002545B0			todo		diagnostico	0	
+patch_254610_empty_list_gate.py	PROBE	keep-probe	-			todo	0x00254610	diagnostico	0	
+patch_254628_list_probe.py	PROBE	keep-probe	-			todo	0x00254628	diagnostico	0	
+patch_2547f8_empty_list_gate.py	PROBE	keep-probe	-			todo	0x002547F8	diagnostico	0	[B71]
+patch_2547f8_walk_list_probe.py	PROBE	keep-probe	-			todo	0x002547F8	diagnostico	0	
+patch_256b64_insert_probe.py	PROBE	keep-probe	0x00256B64			todo		diagnostico	0	
+patch_25c680_loop_probe.py	PROBE	keep-probe	0x0025C680			todo		diagnostico	0	
+patch_263040_freelist_tag_guard.py	CORRECTNESS		0x00263040			todo		guard	0	[ALLOC-NULL-GUARD],[FREELIST-TAG-GUARD],[POSTINTRO]
+patch_263178_store_probe.py	PROBE	keep-probe	0x00263178			todo		diagnostico	0	
+patch_263554_freelist_head_probe.py	PROBE	keep-probe	0x00263554			todo		diagnostico	0	
+patch_263680_alloc_null_guard.py	CORRECTNESS		0x00263680			todo		guard	0	[ALLOC-NULL-GUARD],[POSTINTRO]
+patch_29af0_switch_probe.py	PROBE	keep-probe	0x00029AF0			todo		diagnostico	0	
+patch_2a4fe4_trace.py	PROBE	keep-probe	0x002A4FE4			todo		diagnostico	0	
+patch_2b0fb4_opd.py	OPD		0x002B0FB4			todo		opd	0	
+patch_2b0fb4_trace.py	CORRECTNESS		0x002B0FB4			todo		dispatch-fix	0	[WADLD-T1SZ],[WADLD-VT28R],[WADLD-VT28]
+patch_2b2e04_flag_probe.py	PROBE	keep-probe	0x002B2E04			todo		diagnostico	0	
+patch_2b3d1c_movie_io.py	CORRECTNESS		0x002B3D1C			todo		misc	0	[AREAD]
+patch_2b3d1c_probe.py	PROBE	keep-probe	0x002B3D1C			todo		diagnostico	0	[AREAD]
+patch_32e200_opd.py	OPD	weak	0x0032E200	P0	contract:opd-32e200	todo		opd	0	[CMP-ENTER],[CMP-VCALL]
+patch_39e5a8_product_probe.py	PROBE	keep-probe	0x0039E5A8			todo		diagnostico	0	
+patch_39e5d8_opd.py	OPD	weak	0x0039E5D8	P1	contract:tag-wadld-fin	todo		opd	0	[WADLD-FIN]
+patch_39e6b4_null_entry_probe.py	PROBE	keep-probe	0x0039E6B4			todo		diagnostico	0	
+patch_41f774_sibling_cycle_probe.py	PROBE	keep-probe	-			todo	0x0041F774	diagnostico	0	
+patch_41f78c_prune_probe.py	PROBE	keep-probe	-			todo	0x0041F78C	diagnostico	0	
+patch_41f7a4_descent_cycle_probe.py	PROBE	keep-probe	-			todo	0x0041F7A4	diagnostico	0	
+patch_41fff0_outer_walk_probe.py	PROBE	keep-probe	-			todo	0x0041FFF0	diagnostico	0	
+patch_a1_chain_probe.py	CORRECTNESS		-			todo		dispatch-fix	0	[A1-30D54],[A1-32DF98],[A1-468-EX1],[A1-468-EX2],[A1-468C3C],[A1-CALL30D54B],[A1-CALL30D54]
+patch_autoload_chain_probes.py	CORRECTNESS		-			todo		misc	0	
+patch_b71_2f3f0_guard.py	CORRECTNESS	weak	0x0002F3F0	P1	contract:weak-2f3f0	migrated		guard	0	[B71],[POSTINTRO]
+patch_b71_callsite_trace.py	PROBE	keep-probe	-			todo		diagnostico	0	[B71]
+patch_b71_cb56c_reuse_block.py	CORRECTNESS		0x000CB56C			todo		misc	0	[POSTINTRO],[TYPE15]
+patch_b71_skip_icallb_reuse.py	CORRECTNESS		-			todo		misc	0	
+patch_ba808_wadld_eof.py	CORRECTNESS	keep-probe	-	P2	grep:[BA808]	todo	0x000BA808	wadld	0	[BA808]
+patch_bbd74_autoload_gate_probe.py	CORRECTNESS		-			todo	0x000BBD74	dispatch-fix	0	
+patch_bctr_tail.py	CORRECTNESS		-			todo		dispatch	0	
+patch_cb56c_type_probe.py	PROBE	keep-probe	0x000CB56C			todo		diagnostico	0	
+patch_cbb2c_reentry_disc.py	CORRECTNESS		0x000CBB2C			todo		misc	0	[CB56C-DISC],[CBB2C-DISC],[POSTINTRO]
+patch_cc9d0_live_yield.py	PROBE	keep-probe	0x000CC9D0			todo		diagnostico	0	[TYPE15]
+patch_cd498_enter_probe.py	PROBE	keep-probe	0x000CD498			todo		diagnostico	0	
+patch_ce03c_introseq_block.py	CORRECTNESS	midasm+weak	0x000CE03C	P0	contract:weak-ce03c-pad	migrated		misc	0	[INTROSEQ]
+patch_ce03c_movie_done_reset.py	CORRECTNESS	midasm	0x000CE03C	P1	contract:midasm-ce03c-donereset	migrated		misc	0	[INTROSEQ]
+patch_ce03c_pre_play_stop.py	OBSOLETE	delete	0x000CE03C			todo		orfao-sem-fonte	0	
+patch_ce03c_wait_idle_f2b_movie.py	OBSOLETE	delete	0x000CE03C			todo		orfao-sem-fonte	0	
+patch_comboprop_168350.py	CORRECTNESS		0x00168350			todo		misc	0	[COMBOPROP]
+patch_crc_lookup_probe.py	PROBE	keep-probe	0x001655F0			todo		diagnostico	0	[CRC-HASH],[CRC-LK]
+patch_f2b_multimb_install.py	CORRECTNESS		-			todo		misc	0	[FIOSOPEN],[WADLD-BODY],[WADLD-SM]
+patch_f2b_multimb_stream.py	CORRECTNESS		-			todo		misc	0	
+patch_f2ba9bc_stream_align_install.py	CORRECTNESS		0x002BA9BC			todo		misc	0	[FIOSOPEN],[FREELIST-TAG-GUARD]
+patch_factory_block_ty15_install.py	CORRECTNESS	midasm	0x0039E794	P1	contract:tag-factory	todo		factory	0	[FACTORY],[PS3_FACT_SNAP_MAX],[TYPE15]
+patch_factory_opd_gate.py	OPD	weak	0x0039E6B4	P0	grep:[WADLD-FACT] #A	todo		opd	0	
+patch_factory_snap_ty15_pin.py	CORRECTNESS		-			todo		factory	0	
+patch_fallthrough_2550c8.py	CORRECTNESS	lifter	0x002550C8	P0	smoke:bytes_read=20169344	todo		misc	0	
+patch_fios_16c_selfheal.py	CORRECTNESS		-			todo		fios	0	[FIOSOPEN]
+patch_fios_42a1d4_empty.py	CORRECTNESS		0x0042A1D4			todo		fios	0	[FIOSOPEN]
+patch_fios_42b4_cancel_yield.py	CORRECTNESS		0x002B42B4			todo		fios	0	[FIOSOPEN]
+patch_fios_cancel_yield.py	CORRECTNESS		0x002B3F78			todo		fios	0	
+patch_fios_done_cancel_yield.py	CORRECTNESS		0x002B4274			todo		fios	0	[FIOSOPEN]
+patch_fios_done_yield.py	CORRECTNESS		0x00306534			todo		fios	0	
+patch_fios_f2a_f2b_wad.py	CORRECTNESS		-			todo		fios	0	
+patch_fios_f2b_fo_block.py	CORRECTNESS		0x0030D5CC			todo		fios	0	[FIOSOPEN]
+patch_fios_f2b_fo_ctor.py	CORRECTNESS		-			todo		fios	0	
+patch_fios_f2b_open_block_install.py	CORRECTNESS		-			todo		fios	0	[FIOSOPEN]
+patch_fios_f2b_open_success.py	CORRECTNESS		-			todo		fios	0	
+patch_fios_f2b_pump_ring_bounds.py	CORRECTNESS		-			todo		fios	0	[FIOSOPEN],[WADLD-VT28]
+patch_fios_f2b_pump_ring_bounds2.py	CORRECTNESS		-			todo		fios	0	[FIOSOPEN]
+patch_fios_freelist_rebuild.py	CORRECTNESS		-			todo		fios	0	[FIOSOPEN]
+patch_fios_host_pop.py	CORRECTNESS		-			todo		fios	0	[FIOSOPEN]
+patch_fios_open_probe.py	PROBE	keep-probe	-			todo		diagnostico	0	[AREAD],[FIOSOPEN],[INTROSEQ],[OOBARG],[SNDOPEN]
+patch_fios_play_already_active.py	CORRECTNESS	weak	0x002C0498	P1	contract:weak-2c0498	migrated		fios	0	
+patch_fios_sched_probe.py	PROBE	keep-probe	-			todo		diagnostico	0	[FIOSSCHED]
+patch_fios_sticky.py	CORRECTNESS		0x002B3F78			todo		fios	0	[FIOSSCHED]
+patch_fios_stop_yield.py	CORRECTNESS		-			todo		fios	0	[FIOSOPEN]
+patch_fios_stream_guards_install.py	CORRECTNESS		0x00262610			todo		guard	0	[ALLOC-NULL-GUARD],[FREELIST-TAG-GUARD]
+patch_fios_stream_pump.py	CORRECTNESS		-			todo		fios	0	[ALLOC-NULL-GUARD],[FREELIST-TAG-GUARD]
+patch_flip_path_enter_probe.py	PROBE	keep-probe	-			todo		diagnostico	0	[FLIPPATH],[PS3_FLIPP_FN_N]
+patch_freelist_guard_262610.py	CORRECTNESS		0x00262610			todo		guard	0	[FREELIST-TAG-GUARD]
+patch_groupend_opd.py	OPD	weak	0x002B0AA8	P1	contract:tag-wadld-gend	todo		opd	0	[WADLD-GENDR],[WADLD-GEND]
+patch_host_res_inflate.py	CORRECTNESS	runtime	0x001E7B50	P1	contract:tag-hostres-enter	todo		host	0	[HOSTRES-ENTER]
+patch_icg_ctor_opd.py	OPD	weak	-	P1	contract:tag-icg-vcall	todo		opd	0	[ICG-VCALL]
+patch_introseq_probe.py	PROBE	keep-probe	-			todo		diagnostico	0	[AREAD],[INTROSEQ],[OOBARG]
+patch_jumptable_2a209c.py	CORRECTNESS	switch_table	0x002A209C	P0	grep:case 0x002A27BCu: goto loc_002A27BC;	redundant		jumptable	0	[OPDISP]
+patch_jumptable_2b11b8.py	CORRECTNESS	switch_table	0x002B11B8	P0	grep:case 0x002B12C4u: goto loc_002B12C4;	redundant		jumptable	0	[TYDISP]
+patch_ldrsh_shadersrc_entry.py	CORRECTNESS		-			todo		shader	0	[LDRSH],[SHADERSRC]
+patch_mc_schedule_probe.py	PROBE	keep-probe	-			todo		diagnostico	0	
+patch_menu_present_schedule_probe.py	PROBE	keep-probe	-			todo		diagnostico	0	[MENUPRESENT],[PS3_MP_FN_N]
+patch_oob_ra_probe.py	PROBE	keep-probe	-			todo		diagnostico	0	[OOBARG]
+patch_opdisp_entry.py	OPD	weak	0x002A209C	P1	contract:tag-opdisp-ent	todo		opd	0	[OPDISP-ENT]
+patch_outer_subtag_prune.py	CORRECTNESS	lifter	0x0041FF70	P0	re_session:E4-fix-verification-parede-4	todo		misc	0	
+patch_postthr_pc_probe.py	PROBE	keep-probe	0x00147038			todo		diagnostico	0	[POSTTHR],[PS3_PT_FN_N]
+patch_postthr_spin_r12.py	CORRECTNESS		0x000B951C			todo		misc	0	[POSTTHR-DISC],[POSTTHR-ICALL]
+patch_present_loop_probe.py	PROBE	keep-probe	-			todo		diagnostico	0	[PRESENTLOOP],[PS3_PLP_FN_N]
+patch_sched_arm_probe.py	PROBE	keep-probe	-			todo		diagnostico	0	[PS3_SA_FN_N],[SCHEDARM]
+patch_shadersrc_loop.py	CORRECTNESS		0x003C8578			todo		shader	0	[SS-BIG],[SS-CAP],[SS-DONE2],[SS-DONE],[SS-EMPTY],[SS-GROW],[SS-INS2],[SS-INSFN],[SS-INS],[SS-REC2],[SS-REC],[SS-RESUME]
+patch_smpd_probe.py	PROBE	keep-probe	0x002C05F8			todo		diagnostico	0	[EOSGATE],[ST3],[STOPENTRY],[STOP]
+patch_snd_open_probe.py	PROBE	keep-probe	-			todo		diagnostico	0	[AREAD],[INTROSEQ],[OOBARG],[SNDOPEN]
+patch_st3_audio_done_force.py	CORRECTNESS		0x002C0FA0			todo		misc	0	
+patch_st3_audio_gate.py	CORRECTNESS		0x002C0FA0			todo		misc	0	[AUDGATE]
+patch_st3_probe.py	PROBE	keep-probe	0x002C05F8			todo		diagnostico	0	[ST3]
+patch_stdlib_getenv.py	CORRECTNESS		-			todo		misc	0	
+patch_tydisp_lr.py	CORRECTNESS		-			todo		tymap	0	[TYDISP]
+patch_tymap_18e814.py	CORRECTNESS		0x0018E814			todo		tymap	0	[TYMAP-HIT],[TYMAP-LK],[TYMAP-RET],[TYMAP-VT]
+patch_tymap_probes2.py	CORRECTNESS		0x00171244			todo		tymap	0	[TYDISP],[TYMAP-171],[TYMAP-GS]
+patch_type15_cb56c_highbit.py	CORRECTNESS		0x000CB56C			todo		type15	0	[POSTINTRO],[TYPE15]
+patch_type15_cb56c_prefer_product_install.py	CORRECTNESS		0x000CB56C			todo		type15	0	[POSTINTRO],[TYPE15]
+patch_type15_cb56c_product.py	CORRECTNESS		0x000CB56C			todo		type15	0	
+patch_type15_cc9d0_base_blocks.py	CORRECTNESS		0x000CC9D0			todo		type15	0	[CC9D0],[POSTINTRO],[TYPE15]
+patch_type15_cc9d0_disc.py	CORRECTNESS		0x000CC9D0			todo		type15	0	[CB56C-DISC],[CC9D0-DISC],[CC9D0],[POSTINTRO],[TYPE15]
+patch_type15_fl_rehome_fixup.py	CORRECTNESS		-			todo		type15	0	
+patch_type15_fl_shell_rehome.py	CORRECTNESS		-			todo		type15	0	[TYPE15]
+patch_type15_fl_slot_probe.py	PROBE	keep-probe	0x0039E794			todo		diagnostico	0	
+patch_type15_list_close_preserve_install.py	CORRECTNESS		-			todo		type15	0	[POSTINTRO],[TYPE15]
+patch_type15_list_preserve.py	CORRECTNESS		-			todo		type15	0	[TYPE15]
+patch_type15_rehome_gate.py	CORRECTNESS		-			todo		type15	0	[TYPE15]
+patch_type15_shell_probe.py	CORRECTNESS		0x0039E794			todo		dispatch-fix	0	
+patch_type15_unstick_skip.py	CORRECTNESS		0x000CC9D0			todo		type15	0	[TYPE15]
+patch_type1_name.py	CORRECTNESS		-			todo		misc	0	
+patch_type1_result.py	CORRECTNESS		-			todo		misc	0	[WADLD-T1R]
+patch_typeslot_null_probe.py	PROBE	keep-probe	-			todo		diagnostico	0	[WADLD-VT28]
+patch_typeslot_null_probe2.py	CORRECTNESS		-			todo		misc	0	
+patch_vt64_dispatch_probe.py	PROBE	keep-probe	-			todo		diagnostico	0	
+patch_wad_state_machine.py	CORRECTNESS	weak	0x002BA76C	P1	contract:tag-wadld-call	todo		misc	0	[WADLD-BODY],[WADLD-CALL],[WADLD-OPD],[WADLD-SM]
+patch_wad_tex_capture.py	CORRECTNESS		-			todo		misc	0	[WADLD-T1R]
+patch_wadld_alloc_probe.py	PROBE	keep-probe	-			todo		diagnostico	0	[B71],[BA808],[WADLD-ALLOC]
+patch_wavdrv_probe.py	PROBE	keep-probe	-			todo		diagnostico	0	[FIOSOPEN],[SNDOPEN],[WAVDRV]
+patch_zz_host_api_decls.py	CORRECTNESS		-			todo		host	0	

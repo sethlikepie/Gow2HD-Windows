@@ -1,0 +1,150 @@
+# CONTRACTS.tsv -- pos-condicoes declarativas por patch (D-4.2, 04-04-PLAN.md)
+# formato: id	patch	escopo	alvo	predicado	agulha	valor	razao
+#   escopo=ea:     alvo e' um endereco hex (0x0032E200); regiao = [inicio de
+#                  "void func_XXXXXXXX(", inicio da PROXIMA "void func_")
+#   escopo=global: alvo e' "-"; conta em TODOS os ppu_recomp_*.cpp do LIFT_DIR
+#   predicado=count_ge: conta(agulha) na regiao >= valor
+#   predicado=count_eq: conta(agulha) na regiao == valor
+#   agulha: literal por omissao; prefixo "re:" activa re.findall (regex)
+# verificado por: check_contracts.py CONTRACTS.tsv LIFT_DIR --patch NOME
+# rc=0 (todos passam) / 1 (pelo menos um falha) / 2 (SEM-CONTRATO) / 3 (erro de uso)
+# opd-total (patch="-") e' um contrato de AUDITORIA GLOBAL sem dono unico -- soma
+# o efeito da familia OPD inteira no projecto. check_contracts.py so' o encontra
+# se alguem passar --patch - explicitamente; NAO e' consumido pela classificacao
+# por-patch do Plano 04-05 (ALREADY-APPLIED/NO-MATCH/UNVERIFIED e' sempre por patch).
+# id	patch	escopo	alvo	predicado	agulha	valor	razao
+opd-32e200	patch_32e200_opd.py	ea	0x0032E200	count_ge	ps3_call_opd(	7	EXPECTED_SITES do proprio patch_32e200_opd.py (linha 32); regressao motivadora da fase inteira (36 conversoes OPD desapareceram sem gate)
+opd-32e200-noindirect	patch_32e200_opd.py	ea	0x0032E200	count_eq	ps3_indirect_call	0	nenhum indirecto pode sobrar depois da conversao OPD
+opd-14b1f0	patch_14b1f0_opd.py	ea	0x0014B1F0	count_ge	ps3_call_opd(	12	EXPECTED_SITES de patch_14b1f0_opd.py (Fase 3, 03-02-SUMMARY.md)
+opd-14a01c-a	patch_14a01c_opd.py	ea	0x0014A01C	count_ge	ps3_call_opd(	2	medido no Plano 04-02: 2 sitios por funcao (corrige a leitura de "2 no total" de D-4.7)
+opd-14a01c-b	patch_14a01c_opd.py	ea	0x0014AD94	count_ge	ps3_call_opd(	2	idem, segunda funcao
+opd-total	-	global	-	count_ge	ps3_call_opd(ctx,	47	total agregado do projecto, medido nesta task contra recomp_macos_v3 pos-cadeia-completa: for f in ppu_recomp_*.cpp; do grep -c 'ps3_call_opd(ctx,' $f; done somado = 47 (NAO 52 -- 52 era a leitura da Fase 3 antes da correcao de posse do Plano 04-02; a correcao NAO muda o total global, so a posse por funcao; 47 e' o numero medido nesta sessao e tambem o citado no 04-CONTEXT.md "ESTADO MEDIDO"). Agulha 'ps3_call_opd(ctx,' (nao so 'ps3_call_opd(') deliberadamente: a agulha mais curta tambem casa as 3 declaracoes extern "C" (ps3_call_opd(ppu_context* ctx, ...);) e infla para 50 -- medido e corrigido nesta task (Rule 1).
+#
+# Task 3 -- cruzamento TAG-MANIFEST (gen_contracts_candidates.py), revisto a mao.
+# Medido nesta task: 69 marcadores / 32 patches com dono unico (qualquer classe,
+# proximo do 68/31 da sessao de planeamento). Apos o filtro FUNCIONAL exigido pelo
+# plano (PROBE fica fora do gate, D-4.4), sobram 51 marcadores / 22 patches --
+# menos 18 marcadores de 10 patches PROBE excluidos (patch_crc_lookup_probe.py,
+# patch_smpd_probe.py, patch_flip_path_enter_probe.py,
+# patch_menu_present_schedule_probe.py, patch_postthr_pc_probe.py,
+# patch_present_loop_probe.py, patch_17acc_enter_probe.py,
+# patch_sched_arm_probe.py, patch_wadld_alloc_probe.py, patch_wavdrv_probe.py).
+# Achado real ao verificar contra o lift (Passo 6): [OPDISP] tinha dono unico
+# (patch_jumptable_2a209c.py) mas e' OBSOLETO no MANIFEST.tsv (D-3.2, o lifter
+# passou a materializar um switch nativo -- a fprintf de diagnostico
+# legitimamente deixou de aparecer). Um contrato derivado dele falharia SEMPRE
+# (tag-opdisp: esperado 1 encontrado 0), nao por regressao -- gen_contracts_
+# candidates.py foi corrigido para excluir marcadores OBSOLETO (Rule 1). Numero
+# final abaixo: 50 marcadores / 21 patches.
+tag-a1-30d54	patch_a1_chain_probe.py	global	-	count_ge	[A1-30D54]	1	marcador TAG com dono unico em MANIFEST.tsv (derivado por gen_contracts_candidates.py)
+tag-a1-32df98	patch_a1_chain_probe.py	global	-	count_ge	[A1-32DF98]	1	marcador TAG com dono unico em MANIFEST.tsv (derivado por gen_contracts_candidates.py)
+tag-a1-468-ex1	patch_a1_chain_probe.py	global	-	count_ge	[A1-468-EX1]	1	marcador TAG com dono unico em MANIFEST.tsv (derivado por gen_contracts_candidates.py)
+tag-a1-468-ex2	patch_a1_chain_probe.py	global	-	count_ge	[A1-468-EX2]	1	marcador TAG com dono unico em MANIFEST.tsv (derivado por gen_contracts_candidates.py)
+tag-a1-468c3c	patch_a1_chain_probe.py	global	-	count_ge	[A1-468C3C]	1	marcador TAG com dono unico em MANIFEST.tsv (derivado por gen_contracts_candidates.py)
+tag-a1-call30d54b	patch_a1_chain_probe.py	global	-	count_ge	[A1-CALL30D54B]	2	marcador TAG com dono unico em MANIFEST.tsv (derivado por gen_contracts_candidates.py)
+tag-a1-call30d54	patch_a1_chain_probe.py	global	-	count_ge	[A1-CALL30D54]	1	marcador TAG com dono unico em MANIFEST.tsv (derivado por gen_contracts_candidates.py)
+tag-audgate	patch_st3_audio_gate.py	global	-	count_ge	[AUDGATE]	1	marcador TAG com dono unico em MANIFEST.tsv (derivado por gen_contracts_candidates.py)
+tag-cbb2c-disc	patch_cbb2c_reentry_disc.py	global	-	count_ge	[CBB2C-DISC]	1	marcador TAG com dono unico em MANIFEST.tsv (derivado por gen_contracts_candidates.py)
+tag-cc9d0-disc	patch_type15_cc9d0_disc.py	global	-	count_ge	[CC9D0-DISC]	1	marcador TAG com dono unico em MANIFEST.tsv (derivado por gen_contracts_candidates.py)
+tag-cmp-enter	patch_32e200_opd.py	global	-	count_ge	[CMP-ENTER]	1	marcador TAG com dono unico em MANIFEST.tsv (derivado por gen_contracts_candidates.py)
+tag-cmp-vcall	patch_32e200_opd.py	global	-	count_ge	[CMP-VCALL]	7	marcador TAG com dono unico em MANIFEST.tsv (derivado por gen_contracts_candidates.py)
+tag-comboprop	patch_comboprop_168350.py	global	-	count_ge	[COMBOPROP]	6	marcador TAG com dono unico em MANIFEST.tsv (derivado por gen_contracts_candidates.py)
+tag-factory	patch_factory_block_ty15_install.py	global	-	count_ge	[FACTORY]	6	marcador TAG com dono unico em MANIFEST.tsv (derivado por gen_contracts_candidates.py)
+tag-hostres-enter	patch_host_res_inflate.py	global	-	count_ge	[HOSTRES-ENTER]	1	marcador TAG com dono unico em MANIFEST.tsv (derivado por gen_contracts_candidates.py)
+tag-icg-vcall	patch_icg_ctor_opd.py	global	-	count_ge	[ICG-VCALL]	3	marcador TAG com dono unico em MANIFEST.tsv (derivado por gen_contracts_candidates.py)
+tag-ldrsh	patch_ldrsh_shadersrc_entry.py	global	-	count_ge	[LDRSH]	1	marcador TAG com dono unico em MANIFEST.tsv (derivado por gen_contracts_candidates.py)
+tag-opdisp-ent	patch_opdisp_entry.py	global	-	count_ge	[OPDISP-ENT]	1	marcador TAG com dono unico em MANIFEST.tsv (derivado por gen_contracts_candidates.py)
+tag-postthr-disc	patch_postthr_spin_r12.py	global	-	count_ge	[POSTTHR-DISC]	1	marcador TAG com dono unico em MANIFEST.tsv (derivado por gen_contracts_candidates.py)
+tag-postthr-icall	patch_postthr_spin_r12.py	global	-	count_ge	[POSTTHR-ICALL]	1	marcador TAG com dono unico em MANIFEST.tsv (derivado por gen_contracts_candidates.py)
+tag-ps3_fact_snap_max	patch_factory_block_ty15_install.py	global	-	count_ge	[PS3_FACT_SNAP_MAX]	5	marcador TAG com dono unico em MANIFEST.tsv (derivado por gen_contracts_candidates.py)
+tag-shadersrc	patch_ldrsh_shadersrc_entry.py	global	-	count_ge	[SHADERSRC]	1	marcador TAG com dono unico em MANIFEST.tsv (derivado por gen_contracts_candidates.py)
+tag-ss-big	patch_shadersrc_loop.py	global	-	count_ge	[SS-BIG]	1	marcador TAG com dono unico em MANIFEST.tsv (derivado por gen_contracts_candidates.py)
+tag-ss-cap	patch_shadersrc_loop.py	global	-	count_ge	[SS-CAP]	1	marcador TAG com dono unico em MANIFEST.tsv (derivado por gen_contracts_candidates.py)
+tag-ss-done2	patch_shadersrc_loop.py	global	-	count_ge	[SS-DONE2]	1	marcador TAG com dono unico em MANIFEST.tsv (derivado por gen_contracts_candidates.py)
+tag-ss-done	patch_shadersrc_loop.py	global	-	count_ge	[SS-DONE]	1	marcador TAG com dono unico em MANIFEST.tsv (derivado por gen_contracts_candidates.py)
+tag-ss-empty	patch_shadersrc_loop.py	global	-	count_ge	[SS-EMPTY]	1	marcador TAG com dono unico em MANIFEST.tsv (derivado por gen_contracts_candidates.py)
+tag-ss-grow	patch_shadersrc_loop.py	global	-	count_ge	[SS-GROW]	1	marcador TAG com dono unico em MANIFEST.tsv (derivado por gen_contracts_candidates.py)
+tag-ss-ins2	patch_shadersrc_loop.py	global	-	count_ge	[SS-INS2]	1	marcador TAG com dono unico em MANIFEST.tsv (derivado por gen_contracts_candidates.py)
+tag-ss-insfn	patch_shadersrc_loop.py	global	-	count_ge	[SS-INSFN]	1	marcador TAG com dono unico em MANIFEST.tsv (derivado por gen_contracts_candidates.py)
+tag-ss-ins	patch_shadersrc_loop.py	global	-	count_ge	[SS-INS]	1	marcador TAG com dono unico em MANIFEST.tsv (derivado por gen_contracts_candidates.py)
+tag-ss-rec2	patch_shadersrc_loop.py	global	-	count_ge	[SS-REC2]	1	marcador TAG com dono unico em MANIFEST.tsv (derivado por gen_contracts_candidates.py)
+tag-ss-rec	patch_shadersrc_loop.py	global	-	count_ge	[SS-REC]	1	marcador TAG com dono unico em MANIFEST.tsv (derivado por gen_contracts_candidates.py)
+tag-ss-resume	patch_shadersrc_loop.py	global	-	count_ge	[SS-RESUME]	1	marcador TAG com dono unico em MANIFEST.tsv (derivado por gen_contracts_candidates.py)
+tag-stream-opd	patch_1856a8_stream_opd.py	global	-	count_ge	[STREAM-OPD]	1	marcador TAG com dono unico em MANIFEST.tsv (derivado por gen_contracts_candidates.py)
+tag-tymap-171	patch_tymap_probes2.py	global	-	count_ge	[TYMAP-171]	1	marcador TAG com dono unico em MANIFEST.tsv (derivado por gen_contracts_candidates.py)
+tag-tymap-gs	patch_tymap_probes2.py	global	-	count_ge	[TYMAP-GS]	1	marcador TAG com dono unico em MANIFEST.tsv (derivado por gen_contracts_candidates.py)
+tag-tymap-hit	patch_tymap_18e814.py	global	-	count_ge	[TYMAP-HIT]	1	marcador TAG com dono unico em MANIFEST.tsv (derivado por gen_contracts_candidates.py)
+tag-tymap-lk	patch_tymap_18e814.py	global	-	count_ge	[TYMAP-LK]	1	marcador TAG com dono unico em MANIFEST.tsv (derivado por gen_contracts_candidates.py)
+tag-tymap-ret	patch_tymap_18e814.py	global	-	count_ge	[TYMAP-RET]	1	marcador TAG com dono unico em MANIFEST.tsv (derivado por gen_contracts_candidates.py)
+tag-tymap-vt	patch_tymap_18e814.py	global	-	count_ge	[TYMAP-VT]	1	marcador TAG com dono unico em MANIFEST.tsv (derivado por gen_contracts_candidates.py)
+tag-wadld-batch	patch_14b1f0_opd.py	global	-	count_ge	[WADLD-BATCH]	1	marcador TAG com dono unico em MANIFEST.tsv (derivado por gen_contracts_candidates.py)
+tag-wadld-call	patch_wad_state_machine.py	global	-	count_ge	[WADLD-CALL]	1	marcador TAG com dono unico em MANIFEST.tsv (derivado por gen_contracts_candidates.py)
+tag-wadld-fin	patch_39e5d8_opd.py	global	-	count_ge	[WADLD-FIN]	1	marcador TAG com dono unico em MANIFEST.tsv (derivado por gen_contracts_candidates.py)
+tag-wadld-gendr	patch_groupend_opd.py	global	-	count_ge	[WADLD-GENDR]	1	marcador TAG com dono unico em MANIFEST.tsv (derivado por gen_contracts_candidates.py)
+tag-wadld-gend	patch_groupend_opd.py	global	-	count_ge	[WADLD-GEND]	1	marcador TAG com dono unico em MANIFEST.tsv (derivado por gen_contracts_candidates.py)
+tag-wadld-opd	patch_wad_state_machine.py	global	-	count_ge	[WADLD-OPD]	1	marcador TAG com dono unico em MANIFEST.tsv (derivado por gen_contracts_candidates.py)
+tag-wadld-t1sz	patch_2b0fb4_trace.py	global	-	count_ge	[WADLD-T1SZ]	1	marcador TAG com dono unico em MANIFEST.tsv (derivado por gen_contracts_candidates.py)
+tag-wadld-vt28r	patch_2b0fb4_trace.py	global	-	count_ge	[WADLD-VT28R]	1	marcador TAG com dono unico em MANIFEST.tsv (derivado por gen_contracts_candidates.py)
+tag-wadld-vt28	patch_2b0fb4_trace.py	global	-	count_ge	[WADLD-VT28]	1	marcador TAG com dono unico em MANIFEST.tsv (derivado por gen_contracts_candidates.py)
+#
+# Fase 17 (mid-asm) -- o caminho do marcador [INTROSEQ]/CE03C, valido nos DOIS
+# mecanismos. Ate' ao plano 17-03 o wait-idle do CE03C so' existia como texto
+# injectado por patch_ce03c_introseq_block.py; desde entao a fonte de verdade e'
+# o [[midasm_hook]] Ce03cWaitIdle (games/gow2/config/gow2_recomp.toml) com corpo
+# em games/gow2/hooks/gow2_midasm_hooks.cpp, e o lifter emite a chamada sozinho.
+# Um contrato que exigisse SO' o marcador injectado ficava VERMELHO em todo o
+# lift feito com --config (onde o fix esta' la', mas vindo do host); um que
+# exigisse SO' a chamada mid-asm ficava vermelho no lift de producao actual, que
+# ainda e' antigo. A agulha e' por isso uma ALTERNATIVA regex: o que se verifica
+# e' que a regiao de func_000CE03C tem o fix por UM dos dois mecanismos --
+# nunca por nenhum. Se um dia a producao for promovida a um lift com --config, o
+# lado esquerdo da alternativa deixa de casar e o contrato continua verde pelo
+# lado direito, sem ninguem ter de editar nada.
+midasm-ce03c-waitidle	patch_ce03c_introseq_block.py	ea	0x000CE03C	count_ge	re:\[INTROSEQ\] CE03C wait-idle 1st movie|gow2_midasm_Ce03cWaitIdle\(ctx\);	1	o wait-idle do CE03C tem de estar presente na funcao por um dos dois mecanismos: marcador do bloco injectado (lift antigo) OU chamada gow2_midasm_Ce03cWaitIdle emitida pelo lifter a partir do [[midasm_hook]] (lift com --config, Fase 17 plano 17-03)
+midasm-ce03c-donereset	patch_ce03c_movie_done_reset.py	ea	0x000CE03C	count_ge	re:movie_done_timebased_reset\(\);|gow2_midasm_Ce03cWaitIdle\(ctx\);	1	o reset do timer time-based tem de ser chamado ao re-entrar no CE03C: no lift antigo pela chamada injectada, no lift com --config pelo corpo do hook host (que chama movie_done_timebased_reset e por isso SUBSUME este patch -- ledger estado=migrated)
+#
+# Fase 18 (jump tables) -- os dois P0 de subclasse=jumptable, classificados
+# estado=redundant no plano 18-03. O aceite do ledger e' um unico `case`, e um
+# unico `case` e' um contrato fraco por duas razoes MEDIDAS nesta fase:
+#  a) escopo: `case 0x002A27BCu: goto loc_002A27BC;` aparece em TRES funcoes do
+#     lift (func_002A209C, func_002A2100, func_002A20F4 -- entradas diferentes
+#     que caem no mesmo bctr). Um contrato `global` ficaria verde mesmo que o
+#     switch do proprio dispatcher desaparecesse, desde que um dos irmaos o
+#     mantivesse. Por isso escopo=ea, ancorado na funcao dona do bctr.
+#  b) profundidade: um `case` so' nao distingue "tabela inteira" de "tabela
+#     truncada a uma entrada", e uma jump table truncada e' precisamente um
+#     salto para endereco invalido em runtime. A agulha e' uma ALTERNATIVA
+#     regex sobre os TRES extremos medidos da tabela (primeiro alvo, o alvo do
+#     aceite do ledger, ultimo alvo) com count_ge 3: o switch tem de cobrir o
+#     vao todo, nao um ponto. Medido nos dois re-lifts do 18-02 e no lift de
+#     producao recomp_macos_v2: 54 alvos distintos (2A209C) e 22 (2B11B8).
+# Estes contratos passam SEM os patches e SEM --config -- e' isso que a
+# classificacao `redundant` afirma, e e' isso que eles tornam re-verificavel.
+jt-2a209c-case	patch_jumptable_2a209c.py	ea	0x002A209C	count_ge	case 0x002A27BCu: goto loc_002A27BC;	1	o aceite do ledger (grep:case 0x002A27BCu...) ancorado na funcao dona do bctr 0x002A2130, e nao global -- o mesmo texto existe em func_002A2100 e func_002A20F4
+jt-2a209c-span	patch_jumptable_2a209c.py	ea	0x002A209C	count_ge	re:case 0x002A221Cu: goto loc_002A221C;|case 0x002A27BCu: goto loc_002A27BC;|case 0x002A3648u: goto loc_002A3648;	3	os tres extremos da tabela OPDISP (base guest 0x2A2134 + offsets): primeiro alvo, alvo do aceite, ultimo alvo. Uma tabela truncada falha aqui e passaria no contrato de um unico case
+jt-2b11b8-case	patch_jumptable_2b11b8.py	ea	0x002B11B8	count_ge	case 0x002B12C4u: goto loc_002B12C4;	1	o aceite do ledger (grep:case 0x002B12C4u...) ancorado na funcao dona do bctr 0x002B1224
+jt-2b11b8-span	patch_jumptable_2b11b8.py	ea	0x002B11B8	count_ge	re:case 0x002B1298u: goto loc_002B1298;|case 0x002B12C4u: goto loc_002B12C4;|case 0x002B2170u: goto loc_002B2170;	3	os tres extremos da tabela TYDISP (base guest 0x2B1228 + offsets): primeiro alvo, alvo do aceite, ultimo alvo. NOTA: este contrato cobre a jump table, NAO o residuo do patch (a substituicao da leitura de TOC-0x151C), que continua por classificar -- ver a RESSALVA MEDIDA no cabecalho do PATCH_MIGRATION.tsv
+#
+# Fase 19 (weak override, plano 19-03) -- as duas migracoes que fecham o marco.
+# Mesmo padrao de ALTERNATIVA regex que os contratos da Fase 17 acima, e pela
+# mesma razao MEDIDA: o mesmo aceite tem de ficar verde nos DOIS lifts que
+# coexistem hoje -- o de producao (recomp_macos_v2, ANTIGO, com o texto
+# injectado pelo patch) e um lift novo feito com --config + emit_weak_wrappers
+# (onde o fix esta' la', mas vindo de codigo HOST e por isso invisivel a um
+# grep sobre o lift).
+#
+# O QUE UM CONTRATO SOBRE O LIFT PODE E NAO PODE PROVAR NUM WEAK OVERRIDE
+# (limite declarado, nao escondido): quando a funcao passa a ser propriedade do
+# host, o lift deixa de conter UMA UNICA linha do fix -- so' o par
+# `PPC_FUNC_IMPL(func_X)` (corpo original, simbolo __imp_) + `PPC_FUNC(func_X)`
+# (wrapper fraco). O lado direito da alternativa afirma exactamente isso e nada
+# mais: "esta funcao esta' declarada em [[functions_override]] e o lifter
+# emitiu o par, logo o simbolo func_X que o binario chama vem do host". A outra
+# metade -- que o corpo host faz o que deve -- NAO e' verificavel a partir do
+# lift; e' verificada por `nm -m` (external, nao weak, no binario ligado) e por
+# `strings` dos marcadores que so' existem no host, ambos registados no
+# 19-03-SUMMARY.md. Fingir o contrario seria escrever um aceite que passa sem
+# medir o que diz medir.
+weak-ce03c-pad	patch_ce03c_introseq_block.py	ea	0x000CE03C	count_ge	re:g_ce03c_play_abort|PPC_FUNC_IMPL\(func_000CE03C\)	1	o pad de setjmp/longjmp do CE03C (WINDOWS #8) tem de estar presente por um dos dois mecanismos: o bloco injectado (lift antigo, onde `g_ce03c_play_abort` aparece dentro da regiao da funcao -- medido em recomp_macos_v2) OU a funcao emitida como par __imp_/wrapper fraco, com o pad no override host games/gow2/hooks/gow2_func_overrides.cpp (lift com --config, Fase 19 plano 19-03). Complementa midasm-ce03c-waitidle, que cobre a OUTRA metade do mesmo patch (o wait-idle, migrado na Fase 17)
+weak-2f3f0	patch_b71_2f3f0_guard.py	ea	0x0002F3F0	count_ge	re:\[B71\] 2F3F0 bad str=|PPC_FUNC_IMPL\(func_0002F3F0\)	1	o bounds-check do hash de nomes do registry 393E0 tem de estar presente por um dos dois mecanismos: marcador do bloco injectado (lift antigo) OU funcao emitida como par __imp_/wrapper fraco a partir de [[functions_override]] address = 0x0002F3F0, com o corpo em games/gow2/hooks/gow2_func_overrides.cpp (lift com --config). Substitui o aceite `grep:[B71] 2F3F0 bad str=` do ledger, que so' conhecia o primeiro mecanismo e ficaria VERMELHO num lift onde o fix esta' presente
+weak-2c0498	patch_fios_play_already_active.py	ea	0x002C0498	count_ge	re:vm_read64\(ctx->gpr\[1\] \+ 0x288\)|PPC_FUNC_IMPL\(func_002C0498\)	1	o Play re-entrado com st620!=0 tem de nao fazer teardown+re-open, por um dos dois mecanismos: corpo substituido no lift pelo patch legado -- e a agulha NAO e' o marcador FIOS-PLAY-ALREADY-ACTIVE, por medicao: em recomp_macos_v2 esse marcador vive no COMENTARIO ACIMA da assinatura, portanto FORA da regiao escopo=ea (que comeca em `void func_002C0498(`). Um contrato ancorado nele dava [FAIL] sobre um lift onde o fix esta' aplicado -- medido nesta fase e corrigido. A agulha e' antes a leitura do epilogo `vm_read64(ctx->gpr[1] + 0x288)`, que existe no corpo substituido e NAO no corpo natural (duas instrucoes: bl 0x002BFF88 + salto) OU funcao emitida como par __imp_/wrapper fraco a partir de [[functions_override]] address = 0x002C0498, com o corpo (o epilogo do Play) no override host games/gow2/hooks/gow2_func_overrides.cpp. E' o unico dos tres overrides da Fase 19 em que o host NAO chama __imp_ -- o fix e' nao correr o corpo natural

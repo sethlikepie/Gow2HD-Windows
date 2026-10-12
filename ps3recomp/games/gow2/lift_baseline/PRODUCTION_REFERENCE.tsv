@@ -1,0 +1,55 @@
+# PRODUCTION_REFERENCE.tsv -- a producao MEDIDA, declarada com data e proveniencia.
+#
+# Porque existe
+# -------------
+# Dois criterios de aceite de um re-lift estavam escritos contra um ideal que a
+# PRODUCAO NAO CUMPRE, e um gate assim nao mede regressao -- mede distancia a um
+# sitio onde nunca estivemos:
+#
+#   1. "ICALL-BAD = 0".  A producao tem 12. Um candidato com 12 e' IGUAL a
+#      producao, e o criterio chamava-lhe falha.
+#   2. "accept_relift.sh perna 4 rc=0", que exige elo_stopped="nenhum" -- os 5
+#      elos bloqueantes passados, incluindo o AUTO_LOAD. A producao para no elo
+#      4 em 100% das corridas medidas. E ha' uma razao FORTE, ja' medida e
+#      escrita em lib_boot_chain_metrics.sh:94-118: a thread AUTO_LOAD so' pode
+#      ser criada a jusante de func_00242C94 (o LOOP PRINCIPAL do jogo), que so'
+#      retorna em REQUEST_EXITGAME. **"AUTO_LOAD nunca criada" e' o
+#      comportamento CORRECTO de um jogo que ainda esta a correr** -- um binario
+#      que passasse esse elo teria SAIDO do jogo. O criterio, como estava,
+#      exigia que o jogo se fechasse para o lift ser aceite.
+#
+# O criterio correcto para promover um re-lift nao e' "perfeito", e' **NAO PIOR
+# DO QUE A PRODUCAO QUE VAI SUBSTITUIR**. Este ficheiro e' o unico sitio onde
+# esses numeros vivem, cada um com a data e a proveniencia da medicao -- para
+# que daqui a um mes ninguem tenha de adivinhar de onde veio o 12.
+#
+# Regenerar (nunca a mao os NUMEROS, nunca automatica a PROSA):
+#   ./smoke_chain_gate.sh --bin ./boot_gow2 3 /tmp/ref_prod.tsv
+#   python3 lift_baseline/check_boot_health.py --chain-tsv /tmp/ref_prod.tsv \
+#           --log /tmp/chain_gate_boot_gow2_run1_*.log --log ... \
+#           --freeze /tmp/PRODUCTION_REFERENCE.novo.tsv
+# O --freeze escreve os numeros medidos e deixa a coluna `proveniencia` por
+# completar A MAO, de proposito: um limiar sem proveniencia e' um numero que
+# ninguem pode refutar daqui a um mes. Comparar com este ficheiro antes de o
+# substituir -- uma referencia que se move sozinha deixa de ser referencia.
+#
+# ESCALA DOS ELOS (derive_elo_stopped() em smoke_chain_gate.sh:118-138; a mesma
+# numeracao das notas de 2026-08-02/03). elo_atingido = o indice do elo onde a
+# corrida PAROU; quanto maior, mais longe chegou:
+#   1  intro (st620)          st620 < 3
+#   2  2o movie (StartSeq)    startseq < 2
+#   3  re-Play (NOPIC)        nopic < 4
+#   4  AUTO_LOAD              thr_end < 1   <- onde a PRODUCAO para, sempre
+#   5  WAD (R_PermA)          r_perma < 1
+#   6  nenhum                 os 5 elos passados (exige REQUEST_EXITGAME)
+#
+# sentido: min = candidato >= valor   |   max = candidato <= valor
+# bloqueante: sim = entra no rc de check_boot_health.py
+#
+metrica	valor	sentido	bloqueante	medido_em	proveniencia
+elo_atingido	4	min	sim	2026-08-03	boot_gow2 de producao, 3 corridas de controlo na sessao da nota 2026-08-03-ordem-e-promocao.md §3.1 (elo 4 em 3/3) e 3 corridas na sessao da nota -rebuild-e2e-medicao.md §3.3 (elo 4 em 2/3, a 3a perdida para o flake da intro). NUNCA foi observada uma corrida de producao no elo 5 ou 6.
+st620_max	3	min	sim	2026-08-03	Limiar CONTRATUAL herdado de smoke_relift_equiv.sh (>=3), nao a medicao: a producao mede 11. Fica em 3 de proposito -- e' o mesmo numero que o gate do smoke ja' exigia, e baixar um criterio para o valor medido seria apertar o gate sem prova de que 11 e' estavel.
+icall_bad	12	max	sim	2026-08-03	grep -c 'ICALL-BAD' nos logs de producao: 12 em 3/3 corridas de controlo (/tmp/chain_gate_boot_gow2_run{1,2,3}_20260803_02*.log). O candidato v4ord mediu tambem 12 em 6/6 -- identico, nao pior.
+oob	19	max	sim	2026-08-03	grep -c 'OOB' nos mesmos logs: 19 em 3/3 na producao ([vm] OOB access 0xFFFF0E00). O candidato v4ord mediu 1.
+ffff	16	max	sim	2026-08-03	grep -c '0xFFFF' nos mesmos logs: 16 em 3/3 na producao. O candidato v4ord mediu 1.
+fatal	1	max	sim	2026-08-03	grep -c 'FATAL' nos mesmos logs: 1 em 3/3 na producao -- '[ppu] FATAL: stuck calling 0x000B9354 (2000 times)'. O criterio e' a CONTAGEM, nao o endereco: o 0x000B9354 da producao esta na lista dos 103 enderecos que o fix 0585636 promoveu a funcao, e a producao fica presa a chamar um endereco que o proprio lift NAO define (medido em notes/2026-08-03-trampoline-fn-deficit.md §9) -- um lift fresco define-o e fica preso no poste SEGUINTE (0x00514E80, indefinido nos dois lifts). Endereco diferente com a mesma contagem nao e' regressao; e' o mesmo defeito visto de mais longe. Os enderecos observados sao sempre impressos como INFORMATIVO.

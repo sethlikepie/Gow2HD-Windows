@@ -1,0 +1,33 @@
+# Build output and anything generated from the game: never commit (tools/check_no_game_data.py enforces it)
+__pycache__/
+*.pyc
+/out/
+/build/
+/tools-download/
+*.o
+*.obj
+*.a
+*.exe
+*.dll
+*.log
+*.ELF
+*.elf
+*.BIN
+*.psarc
+*.rap
+*.m2v
+*.wav
+*.wad_ps3
+EBOOT*
+recomp_macos_e435/
+spu_lifted/
+scream_lift/
+movie_cache/
+.kit_lift/
+port_settings.ini
+gow2_port.ini
+/ui_font_metrics.txt
+!winport/d3d12/ui_font_metrics.txt
+scream_tgt.bin
+# personal needles for tools/check_no_game_data.py (local only)
+private_needles.txt

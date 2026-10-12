@@ -1,0 +1,13 @@
+{
+  "source_path": "/Users/andrebrumcortezferreira/Documents/PESSOAL/ps3recomp/docs/BUILDING.md",
+  "type": "DOC",
+  "confidence": "high",
+  "manifest_override": true,
+  "title": "Building ps3recomp",
+  "summary": "Guide covering prerequisites, build options, platform notes, and instructions for building the ps3recomp runtime and game projects.",
+  "scope": ["CMake build system", "runtime library", "compiler support", "platform-specific build requirements", "game project linking"],
+  "cross_refs": [],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

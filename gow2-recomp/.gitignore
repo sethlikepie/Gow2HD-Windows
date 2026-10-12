@@ -1,0 +1,141 @@
+# ---- Game data (copyright — NEVER commit) ----
+*.pkg
+*.rap
+extracted/
+EBOOT.ELF
+EBOOT.BIN
+*.psarc
+*.self
+*.sprx
+spu_images/
+spu_miss_*.bin
+*_text.bin
+movie_cache/
+*.m2v
+*.wad_ps3
+*.wav
+
+# ---- Build artifacts (regenerable) ----
+*.o
+*.obj
+*.exe
+*.a
+*.lib
+*.dll
+*.pdb
+
+# ---- Generated lift chunks (regenerable from functions.json + lifter) ----
+recomp/
+recomp_macos/
+# Saida de lift re-gerada com o lifter actual (Task 3.2, wall M2). Mesmo motivo
+# do recomp_macos/: 31 chunks de centenas de milhares de linhas, regeneraveis
+# com ppu_lifter.py; nunca versionar.
+recomp_macos_v2/
+boot_gow2
+# Cobertura por padrao (Plano 05-05, D-5.4 criterio 4): recomp_macos_v3, futuras
+# v4/v5/..., e variantes com sufixo (ex.: recomp_macos_v2.pre_<data>,
+# recomp_macos_v3_scratch_*) -- todas regeneraveis a partir do
+# EBOOT+functions.json+lifter, mesma justificacao ja usada para recomp_macos_v2/
+# acima. Sem isto, o criterio 4 (git status limpo) era estruturalmente
+# inatingivel: os nomes com sufixo de versao introduzidos pela convencao da
+# Fase 3 (boot_gow2_v3, boot_gow2.pre_v3/v4, etc.) nunca estiveram cobertos.
+recomp_macos_v*/
+# Cobre boot_gow2_v3, boot_gow2.pre_v3, boot_gow2.pre_v4, boot_gow2.wip,
+# boot_gow2_O1, boot_gow2_pre, boot_gow2_relift_test e todas as variantes com
+# sufixo -- mesma justificacao ja usada para o boot_gow2 exato acima.
+boot_gow2*
+recomp_full/
+recomp_mid/
+recomp_compile/
+recomp_vmxfast/
+recomp_stubcheck/
+recomp_ovtest/
+# recomp_mid_v2: keep ONLY the curated funcs.json + launcher (see !rules below),
+# drop the multi-hundred-MB generated .cpp/.h/.o
+recomp_mid_v2/*.cpp
+recomp_mid_v2/*.h
+recomp_mid_v2/*.o
+recomp_mid_v2/*.bin
+
+# ---- Misc junk ----
+*.log
+*.err
+*.cclog
+*.tmp
+
+# ---- Re-include the curated artifacts we DO want ----
+!recomp_mid_v2/
+!recomp_mid_v2/*funcs*.json
+!recomp_mid_v2/rodar_gow2.cmd
+!recomp_mid_v2/*.py
+
+# run/debug dumps
+*.out
+nm_*.txt
+*.txt
+!SPURS*.md
+
+# Oracle session outputs (RPCS3 diff)
+oracle_out/
+
+# RSX frame dumps (local debug, not source)
+frame_*.bmp
+frame_*.png
+
+# App bundles gerados (icone derivado do jogo + hard-link do boot)
+*.app/
+recomp_pre/
+recomp_macos_v3/
+boot_gow2.rdy0_ref
+ghidra_out/
+ghidra_analysis/
+
+# Texturas extraidas do WAD do jogo pelo dump de bind_texture -- ARTE DO JOGO,
+# copyright. O frame_*.png acima ja cobria os dumps de frame; estes escapavam.
+wad_tex__*.png
+# Dumps de textura em PPM (frame_wad_tex_*.ppm): mesmo conteudo do jogo, outro
+# formato -- o frame_*.png nao os apanhava. Apareceram por gerar na raiz a
+# 2026-08-01 durante as corridas com PS3_TRACE_TYMAP=1.
+frame_*.ppm
+wad_tex__*.ppm
+
+# Config e mods do launcher (dados do usuário, não do repo)
+user_config.json
+mods/*
+!mods/.gitkeep
+
+# Lixo de ferramentas
+.DS_Store
+**/.DS_Store
+__pycache__/
+*.py[cod]
+
+# Codigo e imagens DERIVADOS do jogo: nunca no repositorio (sao regenerados a
+# partir da copia do proprio usuario pelo kit de build).
+spu_lifted/**/spu_recomp.c
+spu_lifted/**/spu_recomp.h
+recomp_mid_v2/*.png
+claude_runs/*
+!claude_runs/*.py
+!claude_runs/*.sh
+/g2play*
+/recomp_macos*/
+spu_lifted/
+spu_hit_*.bin
+spu_miss_*.bin
+gcm_stream_*.bin
+/GoW2 Recomp.app/
+
+# kit/setup.sh: extracted pode ser um symlink para a pasta PS3_GAME do usuario
+/extracted
+/.kit_lift/
+/.kit_tools/
+
+# traducao PT-BR (OAleex, v4.4): patch de terceiros de 10 GB, nunca versionar
+/traducao_ptbr/
+
+# microcodigo FP/VP dumpado (PS3_RSX_DUMP_UCODE): codigo do jogo, nunca versionar
+/shader_corpus/
+
+# capturas de quadros do RSX (PS3_RSX_CAPTURE): memoria do jogo, nunca versionar
+/rsx_captures/

@@ -1,0 +1,7 @@
+run	st620	startseq	nopic	thr_end	r_perma	setflip_after_rperm	pad_total	elo_stopped	class
+1	11	2	4	0	1	0	0	AUTO_LOAD (thr_end)	REGRESSAO
+2	11	2	4	0	1	0	0	AUTO_LOAD (thr_end)	REGRESSAO
+3	1	0	0	0	0	0	0	intro (st620)	REGRESSAO
+4	11	2	4	0	1	0	0	AUTO_LOAD (thr_end)	REGRESSAO
+5	11	2	4	0	1	0	0	AUTO_LOAD (thr_end)	REGRESSAO
+6	11	2	4	0	1	0	0	AUTO_LOAD (thr_end)	REGRESSAO

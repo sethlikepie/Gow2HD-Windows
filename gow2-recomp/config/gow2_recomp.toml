@@ -1,0 +1,242 @@
+# gow2_recomp.toml -- recomp config do GoW2 (schema Xenon-style, tools/recomp_config.py)
+#
+# Consumido por ../ps3recomp/tools/recomp_config.py e JA' ligado ao
+# ppu_lifter.py pela flag --config (Fase 17 plano 01): uma seccao
+# [[midasm_hook]] aqui faz o lifter emitir `gow2_midasm_<Name>(ctx);` ao lado da
+# instrucao ancorada. O corpo desse simbolo vive em codigo host versionado,
+# ../hooks/gow2_midasm_hooks.{h,cpp}, compilado e ligado ao boot_gow2 pelo
+# build_macos.sh (Fase 17 plano 02; provado por `nm boot_gow2 | grep
+# gow2_midasm` -> T _gow2_midasm_Ce03cWaitIdle).
+#
+# REGRA ao acrescentar uma entrada aqui: todo o hook declarado precisa de corpo
+# em ../hooks/gow2_midasm_hooks.cpp, no MESMO commit -- sem corpo o link parte
+# (falha alta, de proposito), e o principio G2 do marco exige que um hook nao
+# implementado seja no-op e nao um build partido.
+#
+# NOTA: `jump_address` do [[midasm_hook]] NAO esta implementado -- o lifter
+# recusa com rc=2 em vez de emitir a chamada sem o salto (17-01). Nao usar.
+
+[main]
+elf_path = "../EBOOT.ELF"                     # local only; nunca commitar o ELF
+functions_json = "../functions.json"
+out_directory = "../recomp_macos_v2"
+switch_table_file = "gow2_switch_tables.toml"
+emit_weak_wrappers = true
+#   LIGADA no plano 19-02, no MESMO commit que criou o override host ao lado
+#   (../hooks/gow2_func_overrides.cpp) e o bloco de build que o compila.
+#   Sem esta chave (default false, 19-01) o lifter emite as funcoes na forma de
+#   sempre -- `void func_XXXXXXXX(ppu_context* ctx) {`, simbolo FORTE -- e um
+#   override host com o mesmo nome da' `duplicate symbol` no link. Com ela
+#   ligada, e SO' para as EA declaradas em [[functions_override]] abaixo, a
+#   funcao sai como um par __imp_ (forte) + wrapper FRACO, e o override host
+#   ganha. Nada muda para as outras ~52000 funcoes: a emissao e' por EA
+#   declarada, nunca global (decisao medida no 19-01 -- envolver todas poria
+#   toda a chamada guest a pagar um frame host extra a -O0, o default do build).
+#   REACTIVADA no plano 18-02, no MESMO commit que criou o ficheiro ao lado.
+#   Esteve COMENTADA desde o 17-03 e nao por gosto: o caminho e' resolvido
+#   relativamente a ESTE ficheiro, e com a chave activa a apontar para um
+#   ficheiro inexistente o ppu_lifter.py ABORTA logo no arranque com
+#     Error: .../config/gow2_switch_tables.toml: switch table file not found
+#   (medido) -- e nao aborta so' a parte das switch tables: morre o --config
+#   INTEIRO, portanto o [[midasm_hook]] abaixo deixa de ser emitido e a Fase 17
+#   parte em silencio. A armadilha continua a existir para um caminho ERRADO;
+#   o que deixou de existir foi o ficheiro em falta.
+#   Nao-regressao provada no 18-02: com esta chave activa, um re-lift com
+#   --config continua a emitir gow2_midasm_Ce03cWaitIdle em func_000CE03C.
+
+# ---------------------------------------------------------------------------
+# Mid-asm hooks
+# ---------------------------------------------------------------------------
+# PILOTO DA FASE 17 (plano 17-03). O bloco "wait-idle" do CE03C vivia como 116
+# linhas de texto injectadas dentro do lift gitignored por
+# ../recomp_mid_v2/patch_ce03c_introseq_block.py -- func_000CE03C tem 143 linhas
+# no lift de producao e o lifter gera 27. Um re-lift limpo deixava a funcao nas
+# 27 geradas, e ate' 2026-07-25 NENHUM script repunha a diferenca. Declarado
+# aqui, a chamada passa a ser EMITIDA pelo lifter e o corpo vive em codigo host
+# versionado (../hooks/gow2_midasm_hooks.cpp) -- e sobrevive ao re-lift.
+#
+# `address` e' o EA da PRIMEIRA instrucao de func_000CE03C, logo a chamada sai
+# no topo do corpo, antes da instrucao traduzida (default: antes; nao se declara
+# `after_instruction`). Sem `return`: o corpo natural do guest TEM de continuar.
+#
+# LIMITE CONHECIDO, declarado e nao escondido: o patch tambem envolvia o corpo
+# natural num pad de setjmp/longjmp (g_ce03c_play_abort). Isso NAO cabe num
+# mid-asm (que corre ao lado de uma instrucao, sem a envolver) e fica para os
+# weak overrides da Fase 19.
+[[midasm_hook]]
+name = "Ce03cWaitIdle"
+address = 0x000CE03C
+
+# ---------------------------------------------------------------------------
+# SONDA E1 -- o walk de tipos da parede 4 (func_0041F700, 27 539 083 iteracoes,
+# 99,96% do rasto). NAO E' UM FIX: e' observacao, gated por PS3_TYPEWALK_TRACE=1
+# e OFF por default (regra 6 do CLAUDE.md / G2 do marco). Nenhum dos dois
+# corpos escreve na memoria guest nem toca em ctx->gpr.
+#
+# Previsoes escritas ANTES de a sonda existir:
+#   docs/re_sessions/2026-08-03-E1-typewalk-trace.md
+#
+# Porque MID-ASM e nao weak override: a sonda tem de correr AO LADO da
+# instrucao. Um [[functions_override]] obrigaria a reimplementar 296 bytes de
+# PPC so' para observar -- precisamente a divergencia do CELL que se quer
+# evitar (regra 8 do CLAUDE.md).
+# ---------------------------------------------------------------------------
+
+# E3 -- a sonda de CONTROLO, obrigatoria e primeiro. Conta entradas em push e
+# le' o cursor +0xC8 de `this` ANTES do incremento (r3 = this nesta instrucao).
+# Sem ela, um silencio nao distingue "nao passou aqui" de "nao foi compilada".
+[[midasm_hook]]
+name = "TypewalkPushEnter"
+address = 0x0041F700
+
+# A MEDICAO. 0x0041F78C = `540913BA rlwinm r9,r0,2,14,29` (low16*4), a
+# instrucao publicada ao byte por tres sessoes. Hook ANTES dela, portanto ainda
+# antes da guarda de poda em 0x0041F794: r0=w0(filho), r10=h(filho),
+# r4=q(filho), r3=this, r28=tab, r29=subtag(pai), r30=h(pai)+0x80.
+# Discriminador: tab[low16(filho)] == tab[subtag(filho)] ?
+[[midasm_hook]]
+name = "TypewalkPushChild"
+address = 0x0041F78C
+
+# O POP (`vt+0x44`). A nota games/gow2/notes/2026-08-02-parede-4-*.md mediu
+# 27 539 083 passagens pelo walk contra 2 088 pops -- contar os DOIS lados na
+# mesma corrida e' a unica forma de saber se essa desproporcao e' desta corrida.
+[[midasm_hook]]
+name = "TypewalkPop"
+address = 0x0041F924
+
+# ---------------------------------------------------------------------------
+# SONDA E3 -- a contagem que decide D-11.2 (Fase 11: fix A no desserializador
+# 0x00254C40 vs. fix B no walk exterior 0x0041FF70). NAO E' UM FIX: e'
+# observacao, gated por PS3_OUTER_SUBTAG_CENSUS=1 e OFF por default (regra 6
+# do CLAUDE.md / G2 do marco). O corpo nao escreve memoria guest nem toca em
+# ctx->gpr.
+#
+# Previsoes escritas ANTES de este hook existir:
+#   docs/re_sessions/2026-08-04-E3-outer-walk-subtag-census.md
+#
+# `address` = 0x0042003C -- `lwz r27, 0x88(r28)` dentro de func_0041FF70,
+# IMEDIATAMENTE APOS os dois filtros de flags (flags&0x10 em 0x42000C,
+# flags&3 em 0x420018) e o gate "tem filho" (0x420030/0x420038) terem
+# passado. r28 e' o wrapper de registo ("piVar8") cujo +0x88 a instrucao
+# seguinte vai desreferenciar -- o hook le' o MESMO valor, sem alterar o
+# fluxo. Reverificado contra o EBOOT.ELF real no plano 11-01 (Task 1).
+[[midasm_hook]]
+name = "OuterWalkSubtagCensus"
+address = 0x0042003C
+
+# ---------------------------------------------------------------------------
+# Weak function overrides
+# ---------------------------------------------------------------------------
+# PILOTO DA FASE 19 (plano 19-02). Ao contrario do [[midasm_hook]] acima -- que
+# corre AO LADO de uma instrucao e deixa a funcao guest continuar --, uma
+# entrada aqui SUBSTITUI a funcao inteira por codigo host (que pode chamar o
+# corpo original por __imp_*). E' o mecanismo que o 17-03 declarou em falta para
+# o pad de setjmp/longjmp do CE03C.
+#
+# REGRA ao acrescentar uma entrada aqui: precisa de corpo em
+# ../hooks/gow2_func_overrides.cpp, no MESMO commit. Sem corpo NAO parte o link
+# (ao contrario do mid-asm): o wrapper fraco continua la' e o jogo corre o
+# codigo liftado -- ou seja falha em SILENCIO. Por isso o guard do
+# build_macos.sh enumera os overrides a partir do .cpp e avisa quando um deles
+# nao tem wrapper fraco no lift.
+#
+# `address` = 0x00010230 e' o ENTRY POINT do guest (a EBOOT.ELF tem
+# entry OPD 0x00519570 -> code 0x00010230; ver runtime/ppu/ppu_loader.cpp).
+# Escolhido por ser chamado EXACTAMENTE UMA VEZ e SEMPRE -- se o boot arranca, o
+# override correu -- e por nenhum patch_*.py lhe tocar. O override e' de
+# IDENTIDADE (chama __imp_ e mais nada): este plano liga o CAMINHO, nao muda
+# comportamento. As migracoes reais sao o 19-03.
+#
+# `size` = 0x24: tamanho EXACTO, de functions.json (start 0x00010230,
+# end 0x00010254). O campo e' REGISTADO e nao consumido pelo lifter (19-01) --
+# escreve-se o numero verdadeiro na mesma, para nao criar uma mentira barata.
+[[functions_override]]
+address = 0x00010230
+size = 0x24
+
+# MIGRACAO 1 DA FASE 19 (plano 19-03): o pad de setjmp/longjmp do CE03C.
+# Fecha a entrada 8 do .planning/WINDOWS.md, aberta pelo 17-03: o
+# [[midasm_hook]] acima migrou o wait-idle, mas o bloco injectado por
+# ../recomp_mid_v2/patch_ce03c_introseq_block.py tambem ENVOLVIA o corpo
+# natural num setjmp, com um ramo de abort (cellVdec_stop_all_for_play_abort +
+# reconstrucao da freelist do media object). Um mid-asm corre AO LADO de uma
+# instrucao e nao envolve nada -- so' o weak override envolve.
+#
+# OS DOIS MECANISMOS COMPOEM-SE NESTA MESMA FUNCAO, e e' de proposito: o corpo
+# emitido (`PPC_FUNC_IMPL(func_000CE03C)`, simbolo __imp_) leva a chamada
+# gow2_midasm_Ce03cWaitIdle na primeira linha, e o override host chama esse
+# __imp_ de dentro do setjmp. O override NAO repete o wait-idle -- se o
+# repetisse haveria dois pumps por entrada (ver ../hooks/gow2_func_overrides.cpp).
+#
+# `address` = 0x000CE03C. NAO e' uma linha do functions.json (que so' tem a
+# funcao que a contem, 0x000CE02C..0x000CE0A0): e' uma funcao criada pelas
+# passagens de mid-function entry do lifter, e por isso ESTA' em
+# `lifter.functions` -- que e' o conjunto contra o qual o
+# check_weak_override_coverage valida (19-01). Um EA que nao fosse inicio de
+# funcao liftada era recusado com rc=2 antes de escrever ficheiro nenhum.
+#
+# `size` = 0x64, DERIVADO e nao copiado: 0x000CE0A0 (o `end` da entrada que a
+# contem) - 0x000CE03C. Confere com o corpo liftado -- a ultima chamada tem
+# ctx->lr = 0x000CE08C (bl em 0xCE088), seguida de nop/lwz/addi/stw e do salto
+# do trampolim, o que poe a ultima instrucao em 0x000CE09C. O campo e'
+# REGISTADO e nao consumido pelo lifter (19-01).
+[[functions_override]]
+address = 0x000CE03C
+size = 0x64
+
+# MIGRACAO 2 DA FASE 19 (plano 19-03): o bounds-check do hash de nomes do
+# registry 393E0, que era escrito no lift por
+# ../recomp_mid_v2/patch_b71_2f3f0_guard.py.
+#
+# PORQUE weak E NAO midasm (o ledger da Fase 16 dizia midasm -- corrigido nesta
+# fase, com razao escrita): o guard precisa de um RETURN ANTECIPADO quando o
+# ponteiro e' invalido, e precisa de um TECTO no loop -- ou seja, de mudar a
+# condicao do salto de volta ao topo. Um [[midasm_hook]] corre AO LADO de uma
+# instrucao e nao faz nem uma coisa nem a outra.
+#
+# O override ENVOLVE (chama __imp_func_0002F3F0) em todos os casos menos um: o
+# patologico, em que nao ha' NUL nos primeiros 256 bytes e o corpo liftado nao
+# pararia. Nesse unico caso o hash e' replicado no host, instrucao a instrucao
+# (ver o comentario em ../hooks/gow2_func_overrides.cpp).
+#
+# `address`/`size` = 0x0002F3F0 / 0x4C, lidos do functions.json
+# (start 0x0002F3F0, end 0x0002F43C). O campo `size` e' registado e nao
+# consumido pelo lifter (19-01).
+[[functions_override]]
+address = 0x0002F3F0
+size = 0x4C
+
+# MIGRACAO 3 DA FASE 19 (plano 19-03): o Play re-entrado com st620 != 0, que
+# ../recomp_mid_v2/patch_fios_play_already_active.py escrevia no lift.
+#
+# UNICA das tres que e' SUBSTITUICAO TOTAL (o override NAO chama __imp_): o fix
+# consiste em NAO correr o corpo natural. As duas instrucoes que o lifter gera
+# aqui -- `bl 0x002BFF88` (teardown do container) e `b 0x002C0124` (re-entrar
+# no Play, re-abrindo o m2v) -- SAO o defeito no recompilador, porque o
+# teardown/re-open corre sob o giant lock e perde a corrida com o pool de ops
+# do FIOS. Chamar __imp_ reporia o bug. O corpo host e' o epilogo do proprio
+# Play (o mesmo de 0x002C03FC), copiado verbatim do patch legado.
+#
+# `address` = 0x002C0498. Como o 0x000CE03C, NAO e' uma linha do
+# functions.json -- e' uma funcao criada pelas passagens de mid-function entry
+# do lifter, e por isso esta' em `lifter.functions`, que e' o conjunto contra o
+# qual o check_weak_override_coverage valida.
+#
+# `size` = 0x8, DERIVADO do corpo natural medido num lift sem patch e sem
+# --config: `ctx->lr = 0x002C049C; func_002BFF88(...)` (o bl esta' em
+# 0x002C0498) seguido do salto para func_002C0124 em 0x002C049C -- duas
+# instrucoes, fim em 0x002C04A0. Campo registado e nao consumido (19-01).
+[[functions_override]]
+address = 0x002C0498
+size = 0x8
+
+[optimizations]
+skip_lr = false
+skip_msr = false
+ctr_as_local = false
+xer_as_local = false
+reserved_as_local = false
+cr_as_local = false
+non_argument_as_local = false
+non_volatile_as_local = false

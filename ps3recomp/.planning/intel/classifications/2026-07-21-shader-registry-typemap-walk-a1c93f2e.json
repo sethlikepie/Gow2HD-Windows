@@ -1,0 +1,19 @@
+{
+  "source_path": "/Users/andrebrumcortezferreira/Documents/PESSOAL/ps3recomp/docs/superpowers/plans/2026-07-21-shader-registry-typemap-walk.md",
+  "type": "PRD",
+  "confidence": "high",
+  "manifest_override": true,
+  "title": "Nested walk typemap (`func_00171244`) nunca invocado — plano DIAGNÓSTICO-PRIMEIRO",
+  "summary": "Diagnostic-first plan to find why the guest typemap nested walk never fires naturally, blocking shader registry population.",
+  "scope": ["shader registry", "typemap nested walk", "ICGLdrShader", "SHADERSRC", "CGOWShader", "GATE-FORCE diagnostic tool"],
+  "cross_refs": [
+    "docs/superpowers/plans/2026-07-21-shader-combination-zeroed.md",
+    "gow2-recomp/notes/2026-07-21-combo-discriminate.md",
+    "docs/gow2-recomp-notes.md",
+    "docs/superpowers/plans/2026-07-14-gow2-intro-movie-fsm-wads.md",
+    "docs/gow2-asset-pipeline-map.md"
+  ],
+  "locked": false,
+  "precedence": null,
+  "notes": "MANIFEST_TYPE=PRD applied per instruction, overriding heuristic ADR-like plan-doc signals. This is still-open work: the document explicitly states the natural walk is unproven and only forced via a diagnostic-only GATE-FORCE flag, not accepted as solved (Wall [D] partial per project status)."
+}

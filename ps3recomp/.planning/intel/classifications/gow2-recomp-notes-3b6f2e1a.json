@@ -1,0 +1,13 @@
+{
+  "source_path": "/Users/andrebrumcortezferreira/Documents/PESSOAL/ps3recomp/docs/gow2-recomp-notes.md",
+  "type": "DOC",
+  "confidence": "high",
+  "manifest_override": true,
+  "title": "God of War II HD — static recompilation research notes",
+  "summary": "Research log tracking GoW2 static recompilation bring-up: correctness fixes, boot wall progression, SPU subsystem status, and RSX content pipeline acceptance matrix.",
+  "scope": ["GoW2 bring-up", "PPU lifter fixes", "lv2 syscalls", "boot wall progression", "cellSysutil singleton", "RSX/GCM", "SPU subsystem", "SPURS", "RSX content pipeline", "walls A-E acceptance matrix", "shader cache", "texture pipeline"],
+  "cross_refs": [],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

@@ -1,0 +1,13 @@
+{
+  "source_path": "/Users/andrebrumcortezferreira/Documents/PESSOAL/ps3recomp/docs/TOOLS.md",
+  "type": "DOC",
+  "confidence": "high",
+  "manifest_override": true,
+  "title": "Recompiler Tools Reference",
+  "summary": "Reference documentation for the Python-based PS3 recompilation pipeline tools in tools/.",
+  "scope": ["elf_parser.py", "ppu_disasm.py", "ppu_lifter.py", "spu_disasm.py", "find_functions.py", "nid_database.py", "prx_analyzer.py", "generate_stubs.py", "RPCS3 oracle tools", "Ghidra"],
+  "cross_refs": [],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

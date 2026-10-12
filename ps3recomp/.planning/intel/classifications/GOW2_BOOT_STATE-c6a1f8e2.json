@@ -1,0 +1,13 @@
+{
+  "source_path": "/Users/andrebrumcortezferreira/Documents/PESSOAL/ps3recomp/docs/GOW2_BOOT_STATE.md",
+  "type": "DOC",
+  "confidence": "high",
+  "manifest_override": true,
+  "title": "GoW2 boot — estado sobre o runtime upstream (2026-06-22)",
+  "summary": "Measured evidence of how far the GoW2 boot progresses on the upstream runtime, including a detailed diagnostic of the current wall.",
+  "scope": ["GoW2 boot", "PPU lifter", "SPURS", "cellSysutil", "allocator diagnostic", "spin-loop wall", "sys_lwmutex"],
+  "cross_refs": [],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

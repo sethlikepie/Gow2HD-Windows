@@ -1,0 +1,196 @@
+# PATCH_CATALOG.tsv -- catalogo DERIVADO por gen_catalog.py, NUNCA editado a mao
+# regenerar: .venv/bin/python3 games/gow2/lift_baseline/gen_catalog.py ../gow2-recomp/recomp_mid_v2 games/gow2/lift_baseline/MANIFEST.tsv > games/gow2/lift_baseline/PATCH_CATALOG.tsv
+# fonte: /Users/andrebrumcortezferreira/Documents/PESSOAL/gow2-recomp/recomp_mid_v2
+# 177 patches classificados nesta geracao (99 FUNCIONAL / 78 PROBE), zero indeterminados (D-4.3/D-4.4).
+# Linha de base historica (2026-07-26, primeira medicao contra o corpus real): 64 FUNCIONAL / 23 PROBE / 87 total -- corrigiu os 73/71 desactualizados do ROADMAP. Os numeros da linha acima sao os DESTA geracao e sobrepoem-se a estes; qualquer divergencia e' crescimento do corpus, nao erro.
+# RECLASSIFICACAO 2026-08-03 (ramo 2b) -- quatro patches passam de FUNCIONAL/misc a PROBE/diagnostico:
+#   patch_218364_pool_null_gate.py (PS3_POOL_NULL_IF_BAD), patch_24e3d0_null_product_gate.py (PS3_24E3D0_KEEP_TYPE_ON_NULL),
+#   patch_254610_empty_list_gate.py (PS3_LIST254_EMPTY_IF_NULL), patch_2547f8_empty_list_gate.py (PS3_LIST547_EMPTY_IF_BAD).
+#   Os quatro abrem o docstring com "GATE DE DIAGNOSTICO (nao e' um fix)" e injectam codigo atras de uma env var OFF por omissao -- sem a
+#   var sao no-op comportamental, e o CLAUDE.md (regras 5 e 6) proibe apresenta-los como correccao.
+#   MEDICAO que abriu a questao (2026-08-03, por leitura pura dos tres lifts em disco): patch_24e3d0_null_product_gate.py exige
+#   count(agulha)==1 por chunk e a agulha `vm_write16(ctx->gpr[9] + 0x6, ctx->gpr[0]);` aparece 38 vezes -- 38 em recomp_macos_v5promo,
+#   38 em recomp_macos_v4ord e 38 em recomp_macos_v2 (PRODUCAO). Falha identica nos tres, e o seu marcador 24E3D0-NULLPROD-GATE nunca
+#   entrou no MANIFEST.tsv: nao e' divida de re-lift, e' um patch que nunca aplicou a esta geracao de lift. O patch NAO foi corrigido nem
+#   apagado -- so' a classificacao estava errada.
+#   CUSTO DECLARADO desta regra: raio de 4 patches; os outros 3 estavam APPLIED na etapa 4 de 2026-08-03. Saem do gate por CLASSE, nao por
+#   falharem -- e' uma perda de cobertura real, assumida em nome da regra (a classe e' propriedade do comportamento, nao do nome nem da
+#   conveniencia do dia). Ver games/gow2/notes/2026-08-03-promocao-final.md.
+# patch	escreve	classe	subclasse	no_gate	razao	marcador	chunk_alvo
+patch_146cb8_autoload_creator_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)		
+patch_14a01c_opd.py	ESCREVE	FUNCIONAL	opd	0	subclasse=opd		
+patch_14b1f0_opd.py	ESCREVE	FUNCIONAL	opd	0	subclasse=opd	[WADLD-BATCH]	
+patch_17acc_enter_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)	[PS3_17ACC_FN_N]	
+patch_1856a8_stream_opd.py	ESCREVE	FUNCIONAL	opd	0	subclasse=opd	[STREAM-OPD]	
+patch_210878_alloc_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)		
+patch_212ed0_lazyinit_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)		
+patch_212ed0_mgrlookup_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)		
+patch_212ed0_pop_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)		
+patch_2182a4_anchor_live_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)		
+patch_2182a4_caller_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)		
+patch_2182a4_tocchain_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)		
+patch_218340_pool_index_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)		
+patch_218364_pool_null_gate.py	ESCREVE	PROBE	diagnostico	1	GATE DE DIAGNOSTICO auto-declarado ("nao e' um fix") com env var OFF por omissao, gate=PS3_POOL_NULL_IF_BAD -- sem a var e' no-op comportamental; ver RECLASSIFICACAO 2026-08-03 no cabecalho		
+patch_220284_copyloop_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)		
+patch_227788_allocsrc_probes.py	ESCREVE	FUNCIONAL	misc	0	subclasse=misc		
+patch_227788_sizeclass_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)		
+patch_22851c_poolstore_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)		
+patch_242c94_state_dispatch_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)		
+patch_24d5bc_walker_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)		
+patch_24e198_r21_origin_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)		
+patch_24e1e8_wall1_subtag_skip.py	ESCREVE	FUNCIONAL	misc	0	subclasse=misc		
+patch_24e22c_arg_chain_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)		
+patch_24e2d4_typetag_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)		
+patch_24e2d4_typetag_w0_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)		
+patch_24e3d0_null_product_gate.py	ESCREVE	PROBE	diagnostico	1	GATE DE DIAGNOSTICO auto-declarado ("nao e' um fix") com env var OFF por omissao, gate=PS3_24E3D0_KEEP_TYPE_ON_NULL -- sem a var e' no-op comportamental; ver RECLASSIFICACAO 2026-08-03 no cabecalho		
+patch_24e3d0_victim_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)		
+patch_2545b0_entry_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)		
+patch_254610_empty_list_gate.py	ESCREVE	PROBE	diagnostico	1	GATE DE DIAGNOSTICO auto-declarado ("nao e' um fix") com env var OFF por omissao, gate=PS3_LIST254_EMPTY_IF_NULL -- sem a var e' no-op comportamental; ver RECLASSIFICACAO 2026-08-03 no cabecalho		
+patch_254628_list_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)		
+patch_2547f8_empty_list_gate.py	ESCREVE	PROBE	diagnostico	1	GATE DE DIAGNOSTICO auto-declarado ("nao e' um fix") com env var OFF por omissao, gate=PS3_LIST547_EMPTY_IF_BAD -- sem a var e' no-op comportamental; ver RECLASSIFICACAO 2026-08-03 no cabecalho	[B71]	
+patch_2547f8_walk_list_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)		
+patch_256b64_insert_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)		
+patch_25c680_loop_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)		
+patch_263040_freelist_tag_guard.py	ESCREVE	FUNCIONAL	guard	0	subclasse=guard	[ALLOC-NULL-GUARD],[FREELIST-TAG-GUARD],[POSTINTRO]	
+patch_263178_store_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)		
+patch_263554_freelist_head_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)		
+patch_263680_alloc_null_guard.py	ESCREVE	FUNCIONAL	guard	0	subclasse=guard	[ALLOC-NULL-GUARD],[POSTINTRO]	
+patch_29af0_switch_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)		
+patch_2a4fe4_trace.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)		
+patch_2a98e8_tick_breadcrumbs.py	ESCREVE	FUNCIONAL	misc	0	subclasse=misc	[B71]	
+patch_2a98e8_tick_breadcrumbs2.py	ESCREVE	FUNCIONAL	misc	0	subclasse=misc	[B71]	
+patch_2b0db0_pushh_probe.py	ESCREVE	FUNCIONAL	dispatch-fix	0	subclasse=dispatch-fix		
+patch_2b0fb4_opd.py	ESCREVE	FUNCIONAL	opd	0	subclasse=opd		
+patch_2b0fb4_trace.py	ESCREVE	FUNCIONAL	dispatch-fix	0	subclasse=dispatch-fix	[WADLD-T1SZ],[WADLD-VT28R],[WADLD-VT28]	
+patch_2b2e04_flag_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)		
+patch_2b3d1c_movie_io.py	ESCREVE	FUNCIONAL	misc	0	subclasse=misc	[AREAD]	
+patch_2b3d1c_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)	[AREAD]	
+patch_2b9c80_destroy_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)		
+patch_32e200_opd.py	ESCREVE	FUNCIONAL	opd	0	subclasse=opd	[CMP-ENTER],[CMP-VCALL]	
+patch_39da78_scope_probe.py	ESCREVE	FUNCIONAL	dispatch-fix	0	subclasse=dispatch-fix		
+patch_39e5a8_empty_factory_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)		
+patch_39e5a8_product_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)		
+patch_39e5d8_opd.py	ESCREVE	FUNCIONAL	opd	0	subclasse=opd	[WADLD-FIN]	
+patch_39e6b4_null_entry_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)		
+patch_41494_e86_keep_scope.py	ESCREVE	FUNCIONAL	misc	0	subclasse=misc		
+patch_41f774_sibling_cycle_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)		
+patch_41f78c_prune_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)		
+patch_41f7a4_descent_cycle_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)		
+patch_41fff0_outer_walk_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)		
+patch_4244c0_listwalk.py	ESCREVE	FUNCIONAL	misc	0	subclasse=misc	[B71]	
+patch_457e44_fprwrap_probe.py	ESCREVE	FUNCIONAL	dispatch-fix	0	subclasse=dispatch-fix		
+patch_a1_chain_probe.py	ESCREVE	FUNCIONAL	dispatch-fix	0	subclasse=dispatch-fix	[A1-30D54],[A1-32DF98],[A1-468-EX1],[A1-468-EX2],[A1-468C3C],[A1-CALL30D54B],[A1-CALL30D54]	
+patch_autoload_chain_probes.py	ESCREVE	FUNCIONAL	misc	0	subclasse=misc		
+patch_b71_2f3f0_guard.py	ESCREVE	FUNCIONAL	guard	0	subclasse=guard	[B71],[POSTINTRO]	
+patch_b71_callsite_trace.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)	[B71]	
+patch_b71_cb56c_reuse_block.py	ESCREVE	FUNCIONAL	misc	0	subclasse=misc	[POSTINTRO],[TYPE15]	
+patch_b71_skip_icallb_reuse.py	VERIFICA	FUNCIONAL	misc	0	subclasse=misc		
+patch_ba808_wadld_eof.py	ESCREVE	FUNCIONAL	wadld	0	subclasse=wadld	[BA808]	
+patch_bbd74_autoload_gate_probe.py	ESCREVE	FUNCIONAL	dispatch-fix	0	subclasse=dispatch-fix		
+patch_bctr_tail.py	ESCREVE	FUNCIONAL	dispatch	0	subclasse=dispatch		
+patch_c992c_tab4_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)		
+patch_cb56c_type_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)		
+patch_cbb2c_reentry_disc.py	ESCREVE	FUNCIONAL	misc	0	subclasse=misc	[CB56C-DISC],[CBB2C-DISC],[POSTINTRO]	
+patch_cc9d0_live_yield.py	ESCREVE	PROBE	diagnostico	1	instrumentacao diagnostica auto-declarada (Diagnostic only), gated por env, OFF por omissao	[TYPE15]	
+patch_cd498_enter_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)		
+patch_ce03c_introseq_block.py	ESCREVE	FUNCIONAL	misc	0	subclasse=misc	[INTROSEQ]	
+patch_ce03c_movie_done_reset.py	ESCREVE	FUNCIONAL	misc	0	subclasse=misc	[INTROSEQ]	
+patch_ce03c_pre_play_stop.py	VERIFICA	PROBE	orfao-sem-fonte	1	verificador puro, comportamento nunca existiu (regra 4 CLAUDE.md): escreve-lo de raiz seria inventar comportamento (regra 4 do CLAUDE.md), ainda		
+patch_ce03c_wait_idle_f2b_movie.py	VERIFICA	PROBE	orfao-sem-fonte	1	verificador puro, comportamento nunca existiu (regra 4 CLAUDE.md): de onde recortar o bloco, e escreve-lo de raiz seria inventar comportamento		
+patch_clsidx_probe_gate.py	ESCREVE	FUNCIONAL	misc	0	subclasse=misc		
+patch_comboprop_168350.py	ESCREVE	FUNCIONAL	misc	0	subclasse=misc	[COMBOPROP]	
+patch_crc_lookup_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)	[CRC-HASH],[CRC-LK]	
+patch_e87_wad_lifecycle_probes.py	ESCREVE	FUNCIONAL	misc	0	subclasse=misc		
+patch_e88_pushall_children_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)		
+patch_e89_lglsca_attached_gate.py	ESCREVE	FUNCIONAL	misc	0	subclasse=misc		
+patch_e90_f2b_natural_gate.py	ESCREVE	FUNCIONAL	misc	0	subclasse=misc		
+patch_e95_reg_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)		
+patch_e95b_deflist_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)		
+patch_e95c_pool_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)		
+patch_e95d_defloop_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)		
+patch_e96_b71_natural_icall.py	ESCREVE	FUNCIONAL	misc	0	subclasse=misc		
+patch_e97_list236a1c_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)		
+patch_e98_list70_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)		
+patch_e99_b71_full_393e0.py	ESCREVE	FUNCIONAL	misc	0	subclasse=misc		
+patch_f2b_multimb_install.py	ESCREVE	FUNCIONAL	misc	0	subclasse=misc	[FIOSOPEN],[WADLD-BODY],[WADLD-SM]	
+patch_f2b_multimb_stream.py	VERIFICA	FUNCIONAL	misc	0	subclasse=misc		
+patch_f2ba9bc_stream_align_install.py	ESCREVE	FUNCIONAL	misc	0	subclasse=misc	[FIOSOPEN],[FREELIST-TAG-GUARD]	
+patch_factory_block_ty15_install.py	ESCREVE	FUNCIONAL	factory	0	subclasse=factory	[FACTORY],[PS3_FACT_SNAP_MAX],[TYPE15]	
+patch_factory_opd_gate.py	ESCREVE	FUNCIONAL	opd	0	subclasse=opd		
+patch_factory_snap_ty15_pin.py	VERIFICA	FUNCIONAL	factory	0	subclasse=factory		
+patch_fallthrough_2550c8.py	ESCREVE	FUNCIONAL	misc	0	subclasse=misc		
+patch_fios_16c_selfheal.py	ESCREVE	FUNCIONAL	fios	0	subclasse=fios	[FIOSOPEN]	
+patch_fios_42a1d4_empty.py	ESCREVE	FUNCIONAL	fios	0	subclasse=fios	[FIOSOPEN]	
+patch_fios_42b4_cancel_yield.py	ESCREVE	FUNCIONAL	fios	0	subclasse=fios	[FIOSOPEN]	
+patch_fios_cancel_yield.py	ESCREVE	FUNCIONAL	fios	0	subclasse=fios		
+patch_fios_done_cancel_yield.py	ESCREVE	FUNCIONAL	fios	0	subclasse=fios	[FIOSOPEN]	
+patch_fios_done_yield.py	ESCREVE	FUNCIONAL	fios	0	subclasse=fios		
+patch_fios_f2a_f2b_wad.py	VERIFICA	FUNCIONAL	fios	0	subclasse=fios		
+patch_fios_f2b_fo_block.py	ESCREVE	FUNCIONAL	fios	0	subclasse=fios	[FIOSOPEN]	
+patch_fios_f2b_fo_ctor.py	VERIFICA	FUNCIONAL	fios	0	subclasse=fios		
+patch_fios_f2b_open_block_install.py	ESCREVE	FUNCIONAL	fios	0	subclasse=fios	[FIOSOPEN]	
+patch_fios_f2b_open_success.py	VERIFICA	FUNCIONAL	fios	0	subclasse=fios		
+patch_fios_f2b_pump_ring_bounds.py	ESCREVE	FUNCIONAL	fios	0	subclasse=fios	[FIOSOPEN],[WADLD-VT28]	
+patch_fios_f2b_pump_ring_bounds2.py	ESCREVE	FUNCIONAL	fios	0	subclasse=fios	[FIOSOPEN]	
+patch_fios_freelist_rebuild.py	ESCREVE	FUNCIONAL	fios	0	subclasse=fios	[FIOSOPEN]	
+patch_fios_host_pop.py	ESCREVE	FUNCIONAL	fios	0	subclasse=fios	[FIOSOPEN]	
+patch_fios_open_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)	[AREAD],[FIOSOPEN],[INTROSEQ],[OOBARG],[SNDOPEN]	
+patch_fios_play_already_active.py	ESCREVE	FUNCIONAL	fios	0	subclasse=fios		
+patch_fios_sched_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)	[FIOSSCHED]	
+patch_fios_sticky.py	ESCREVE	FUNCIONAL	fios	0	subclasse=fios	[FIOSSCHED]	
+patch_fios_stop_yield.py	ESCREVE	FUNCIONAL	fios	0	subclasse=fios	[FIOSOPEN]	
+patch_fios_stream_guards_install.py	ESCREVE	FUNCIONAL	guard	0	subclasse=guard	[ALLOC-NULL-GUARD],[FREELIST-TAG-GUARD]	
+patch_fios_stream_pump.py	VERIFICA	FUNCIONAL	fios	0	subclasse=fios	[ALLOC-NULL-GUARD],[FREELIST-TAG-GUARD]	
+patch_flip_path_enter_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)	[FLIPPATH],[PS3_FLIPP_FN_N]	
+patch_freelist_guard_262610.py	ESCREVE	FUNCIONAL	guard	0	subclasse=guard	[FREELIST-TAG-GUARD]	
+patch_groupend_opd.py	ESCREVE	FUNCIONAL	opd	0	subclasse=opd	[WADLD-GENDR],[WADLD-GEND]	
+patch_host_res_inflate.py	ESCREVE	FUNCIONAL	host	0	subclasse=host	[HOSTRES-ENTER]	
+patch_icg_ctor_opd.py	ESCREVE	FUNCIONAL	opd	0	subclasse=opd	[ICG-VCALL]	
+patch_introseq_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)	[AREAD],[INTROSEQ],[OOBARG]	
+patch_jumptable_2a209c.py	ESCREVE	FUNCIONAL	jumptable	0	subclasse=jumptable	[OPDISP]	
+patch_jumptable_2b11b8.py	ESCREVE	FUNCIONAL	jumptable	0	subclasse=jumptable	[TYDISP]	
+patch_ldrsh_shadersrc_entry.py	ESCREVE	FUNCIONAL	shader	0	subclasse=shader	[LDRSH],[SHADERSRC]	
+patch_mc_schedule_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)		
+patch_menu_present_schedule_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)	[MENUPRESENT],[PS3_MP_FN_N]	
+patch_oob_ra_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)	[OOBARG]	
+patch_opdisp_entry.py	ESCREVE	FUNCIONAL	opd	0	subclasse=opd	[OPDISP-ENT]	
+patch_outer_subtag_prune.py	VERIFICA	FUNCIONAL	misc	0	subclasse=misc		
+patch_postthr_pc_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)	[POSTTHR],[PS3_PT_FN_N]	
+patch_postthr_spin_r12.py	ESCREVE	FUNCIONAL	misc	0	subclasse=misc	[POSTTHR-DISC],[POSTTHR-ICALL]	
+patch_present_loop_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)	[PRESENTLOOP],[PS3_PLP_FN_N]	
+patch_r31src_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)		
+patch_sched_arm_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)	[PS3_SA_FN_N],[SCHEDARM]	
+patch_shadersrc_loop.py	ESCREVE	FUNCIONAL	shader	0	subclasse=shader	[SS-BIG],[SS-CAP],[SS-DONE2],[SS-DONE],[SS-EMPTY],[SS-GROW],[SS-INS2],[SS-INSFN],[SS-INS],[SS-REC2],[SS-REC],[SS-RESUME]	
+patch_smpd_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)	[EOSGATE],[ST3],[STOPENTRY],[STOP]	
+patch_snd_open_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)	[AREAD],[INTROSEQ],[OOBARG],[SNDOPEN]	
+patch_spu1_9540_align_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)		
+patch_st3_audio_done_force.py	ESCREVE	FUNCIONAL	misc	0	subclasse=misc		
+patch_st3_audio_gate.py	ESCREVE	FUNCIONAL	misc	0	subclasse=misc	[AUDGATE]	
+patch_st3_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)	[ST3]	
+patch_stdlib_getenv.py	ESCREVE	FUNCIONAL	misc	0	subclasse=misc		
+patch_tydisp_lr.py	ESCREVE	FUNCIONAL	tymap	0	subclasse=tymap	[TYDISP]	
+patch_tymap_18e814.py	ESCREVE	FUNCIONAL	tymap	0	subclasse=tymap	[TYMAP-HIT],[TYMAP-LK],[TYMAP-RET],[TYMAP-VT]	
+patch_tymap_probes2.py	ESCREVE	FUNCIONAL	tymap	0	subclasse=tymap	[TYDISP],[TYMAP-171],[TYMAP-GS]	
+patch_type15_cb56c_highbit.py	ESCREVE	FUNCIONAL	type15	0	subclasse=type15	[POSTINTRO],[TYPE15]	
+patch_type15_cb56c_prefer_product_install.py	ESCREVE	FUNCIONAL	type15	0	subclasse=type15	[POSTINTRO],[TYPE15]	
+patch_type15_cb56c_product.py	VERIFICA	FUNCIONAL	type15	0	subclasse=type15		
+patch_type15_cc9d0_base_blocks.py	ESCREVE	FUNCIONAL	type15	0	subclasse=type15	[CC9D0],[POSTINTRO],[TYPE15]	
+patch_type15_cc9d0_disc.py	ESCREVE	FUNCIONAL	type15	0	subclasse=type15	[CB56C-DISC],[CC9D0-DISC],[CC9D0],[POSTINTRO],[TYPE15]	
+patch_type15_fl_rehome_fixup.py	ESCREVE	FUNCIONAL	type15	0	subclasse=type15		
+patch_type15_fl_shell_rehome.py	ESCREVE	FUNCIONAL	type15	0	subclasse=type15	[TYPE15]	
+patch_type15_fl_slot_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)		
+patch_type15_list_close_preserve_install.py	ESCREVE	FUNCIONAL	type15	0	subclasse=type15	[POSTINTRO],[TYPE15]	
+patch_type15_list_preserve.py	ESCREVE	FUNCIONAL	type15	0	subclasse=type15	[TYPE15]	
+patch_type15_rehome_gate.py	ESCREVE	FUNCIONAL	type15	0	subclasse=type15	[TYPE15]	
+patch_type15_shell_probe.py	ESCREVE	FUNCIONAL	dispatch-fix	0	subclasse=dispatch-fix		
+patch_type15_unstick_skip.py	ESCREVE	FUNCIONAL	type15	0	subclasse=type15	[TYPE15]	
+patch_type1_name.py	ESCREVE	FUNCIONAL	misc	0	subclasse=misc		
+patch_type1_result.py	ESCREVE	FUNCIONAL	misc	0	subclasse=misc	[WADLD-T1R]	
+patch_typeslot_null_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)	[WADLD-VT28]	
+patch_typeslot_null_probe2.py	ESCREVE	FUNCIONAL	misc	0	subclasse=misc		
+patch_vt64_dispatch_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)		
+patch_wad_state_machine.py	ESCREVE	FUNCIONAL	misc	0	subclasse=misc	[WADLD-BODY],[WADLD-CALL],[WADLD-OPD],[WADLD-SM]	
+patch_wad_tex_capture.py	ESCREVE	FUNCIONAL	misc	0	subclasse=misc	[WADLD-T1R]	
+patch_wadld_alloc_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)	[B71],[BA808],[WADLD-ALLOC]	
+patch_wavdrv_probe.py	ESCREVE	PROBE	diagnostico	1	sufixo _probe/_trace, corpo sem tokens de despacho (diagnostico puro)	[FIOSOPEN],[SNDOPEN],[WAVDRV]	
+patch_zz_host_api_decls.py	ESCREVE	FUNCIONAL	host	0	subclasse=host		

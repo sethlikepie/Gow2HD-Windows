@@ -1,0 +1,43 @@
+/* up_rename.h -- force-included into the vendored upstream D3D12 renderer sources.
+ * Namespaces every symbol the vendored decompilers / texture / vertex-fetch helpers define,
+ * so they link next to the fork's own (different-signature) versions. */
+#pragma once
+#define g_rsx_fp_nonfinite_constants up_g_rsx_fp_nonfinite_constants
+#define rsx_fetch_attrib up_rsx_fetch_attrib
+#define rsx_fp_alpha_ref up_rsx_fp_alpha_ref
+#define rsx_fp_apply_alpha_test up_rsx_fp_apply_alpha_test
+#define rsx_fp_apply_alpha_test_buffered up_rsx_fp_apply_alpha_test_buffered
+#define rsx_fp_apply_unnorm_scale up_rsx_fp_apply_unnorm_scale
+#define rsx_fp_code_hash up_rsx_fp_code_hash
+#define rsx_fp_collect_constants up_rsx_fp_collect_constants
+#define rsx_fp_constant_ring_plan up_rsx_fp_constant_ring_plan
+#define rsx_fp_decompile up_rsx_fp_decompile
+#define rsx_fp_decompile_buffered_ex up_rsx_fp_decompile_buffered_ex
+#define rsx_fp_decompile_ex up_rsx_fp_decompile_ex
+#define rsx_fp_extract_consts up_rsx_fp_extract_consts
+#define rsx_fp_literal_source_hash up_rsx_fp_literal_source_hash
+#define rsx_fp_opcode_name up_rsx_fp_opcode_name
+#define rsx_fp_program_size up_rsx_fp_program_size
+#define rsx_fp_read_word up_rsx_fp_read_word
+#define rsx_fp_sanitize_constant_word up_rsx_fp_sanitize_constant_word
+#define rsx_fp_structural_hash up_rsx_fp_structural_hash
+#define rsx_log2_ceil up_rsx_log2_ceil
+#define rsx_rd_bef up_rsx_rd_bef
+#define rsx_rd_half_be up_rsx_rd_half_be
+#define rsx_swizzle_offset up_rsx_swizzle_offset
+#define rsx_texture_argb_is_rgba up_rsx_texture_argb_is_rgba
+#define rsx_texture_component_remap up_rsx_texture_component_remap
+#define rsx_texture_cube_face_stride up_rsx_texture_cube_face_stride
+#define rsx_texture_decode up_rsx_texture_decode
+#define rsx_texture_layout up_rsx_texture_layout
+#define rsx_texture_layout_pitched up_rsx_texture_layout_pitched
+#define rsx_texture_mip_chain up_rsx_texture_mip_chain
+#define rsx_vertex_constant_ring_plan up_rsx_vertex_constant_ring_plan
+#define rsx_vp_analyze_inputs up_rsx_vp_analyze_inputs
+#define rsx_vp_decompile up_rsx_vp_decompile
+#define rsx_vp_decompile_compact_ex up_rsx_vp_decompile_compact_ex
+#define rsx_vp_decompile_ex up_rsx_vp_decompile_ex
+#define rsx_vp_program_size_instrs up_rsx_vp_program_size_instrs
+#define rsx_vp_sca_name up_rsx_vp_sca_name
+#define rsx_vp_vec_name up_rsx_vp_vec_name
+#define rsx_fp_apply_depth_tex up_rsx_fp_apply_depth_tex

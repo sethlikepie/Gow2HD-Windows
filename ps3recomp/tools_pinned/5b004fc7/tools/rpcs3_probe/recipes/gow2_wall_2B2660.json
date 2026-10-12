@@ -1,0 +1,24 @@
+[
+  {"op": "mem", "addr": "0x008691A8", "len": 4,
+   "label": "poll-flag-before",
+   "_note": "*(TOC-0x1488) -> 0x008691A8. The loop at 0x002B2E2C spins while this word is 0."},
+
+  {"op": "breakpoint", "addr": "0x002B2E2C", "label": "poll-loop-entry",
+   "continue_first": true, "max_hits": 3, "timeout_s": 120,
+   "_note": "the `bl 0x2B2DD0` inside the poll loop -- confirms RPCS3 reaches the same loop"},
+
+  {"op": "breakpoint", "addr": "0x002B2660", "label": "wall-entry",
+   "continue_first": true, "max_hits": 3, "timeout_s": 120,
+   "_note": "func_002B2660, the tick that does not return on our runtime"},
+
+  {"op": "breakpoint", "addr": "0x002B2DE0", "label": "wall-returned",
+   "continue_first": true, "max_hits": 3, "timeout_s": 120,
+   "_note": "DISCRIMINATOR: if RPCS3 hits this, func_002B2660 returns there and our hang is ours, not the game's"},
+
+  {"op": "breakpoint", "addr": "0x002B2E3C", "label": "poll-loop-exit",
+   "continue_first": true, "max_hits": 1, "timeout_s": 180,
+   "_note": "the branch target taken when the flag flips -- capture the state that satisfied it"},
+
+  {"op": "mem", "addr": "0x008691A8", "len": 4, "label": "poll-flag-after"},
+  {"op": "mem", "addr": "0x0053FCF0", "len": 8, "label": "toc-slot-and-neighbour"}
+]

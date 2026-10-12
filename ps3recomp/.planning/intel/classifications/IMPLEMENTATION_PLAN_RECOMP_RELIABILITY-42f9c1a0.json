@@ -1,0 +1,13 @@
+{
+  "source_path": "/Users/andrebrumcortezferreira/Documents/PESSOAL/ps3recomp/docs/IMPLEMENTATION_PLAN_RECOMP_RELIABILITY.md",
+  "type": "PRD",
+  "confidence": "high",
+  "manifest_override": true,
+  "title": "Plano de implementação: recompilação confiável e estado consistente",
+  "summary": "Phased implementation plan defining requirements and acceptance criteria for reliable, verifiable, reproducible PS3-to-native static recompilation.",
+  "scope": ["static recompilation", "PPU/SPU state fidelity", "build pipeline", "CI", "testing", "reproducibility"],
+  "cross_refs": [],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

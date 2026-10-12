@@ -1,0 +1,27 @@
+# Captured GoW2 spu1 workload target; generated lift must register it.
+target 0x391C
+# A/B 2026-09-20: emitted by spu1 image 2 after 0x391C was promoted.
+target 0x6088
+# A/B 2026-09-20: next image-2 destination after 0x6088 was promoted.
+target 0x64E0
+# A/B 2026-09-20: next image-2 destination after 0x64E0 was promoted.
+target 0x56AC
+# Persisted destinations captured while walking the image-2 workload.  The
+# lifter/runtime normalize bi/bisl targets by clearing the low two bits.
+target 0x3318
+target 0x3410
+target 0xABA0
+# Removed 2026-09-22:
+# - 0x6074 is the "il r84,-3; br 0x5100" error exit of a return-code table.
+#   Running it (instead of stopping the job at the unknown target, as before
+#   2026-09-20) sends the job down its -3 cleanup, whose GETLLAR/PUTLLC loop
+#   (pc 0xA750/0xA810) takes LS addresses (0x3FE00, 0x3FD00, ...) as effective
+#   addresses and adds 0x7FFFFFFF to one word every 0x60 bytes of the PPU code
+#   segment -- among them the script VM jump table at 0x29B70 (0x3EC ->
+#   0x800003EB), the post-Colossus [ICALL-BAD] ctr=0x80029F47. Why the job ends
+#   in -3 with LS addresses in its list is the open defect; see
+#   ps3recomp/docs/re_sessions/2026-09-22-spu1-6074-texto-corrompido.md.
+# - 0xB54 0x1BB0 0x2B84 (below the image, SPURS kernel area) and 0xEF80
+#   0x15BB0 0x26168 0x30000 0x34288 0x3C0D0 0x3FDA8 (data/bss/stack above the
+#   code, 0x3000..0xBB20) are not code; patch_spu1_observed_entries.py now
+#   drops any destination outside the image's executable segment.

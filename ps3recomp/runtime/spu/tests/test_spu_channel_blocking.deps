@@ -1,0 +1,2 @@
+# spu_channel_read_blocking's isolated test spawns a real pthread producer.
+EXTRA="-lpthread"

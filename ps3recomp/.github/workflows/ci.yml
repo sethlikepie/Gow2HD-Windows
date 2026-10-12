@@ -1,0 +1,159 @@
+# CI do ps3recomp -- task F0-7 (Fase 0, ultimo bullet do plano:
+# docs/IMPLEMENTATION_PLAN_RECOMP_RELIABILITY.md).
+#
+# DECISAO JA TOMADA PELO HUMANO (nao reabrir aqui -- ver
+# .superpowers/sdd/task-F0-7-brief.md): macOS e' BLOQUEANTE (falha o
+# workflow). Linux e Windows sao NAO-BLOQUEANTES (continue-on-error): todo o
+# trabalho ate agora so foi exercitado em macOS/arm64, e e' altamente
+# provavel que Linux/Windows falhem a primeira. O objectivo destes dois
+# jobs e' DESCOBRIR E REGISTAR o que falha nessas plataformas -- nunca
+# forcar verde nem mascarar -- ate serem promovidos a bloqueantes numa fase
+# futura, quando estiverem realmente verdes.
+#
+# Este workflow SO CHAMA os scripts ja entregues pela F0-6
+# (scripts/test_python.sh, scripts/test_runtime.sh) -- nao reimplementa
+# nenhuma logica de descoberta/classificacao de testes aqui (essa logica
+# vive nos scripts e no CMakeLists.txt da F0-5).
+#
+# scripts/smoke_macos.sh NAO entra neste pipeline de proposito: e'
+# conhecido-partido (o seu passo 3 nao linka -- ver F0-1/F0-5/F0-6);
+# corrigi-lo esta fora de ambito desta task.
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    # Todos os passos correm em bash em qualquer runner -- incl. Windows, que
+    # tem Git Bash instalado por omissao no runner "windows-latest". Os
+    # proprios scripts (test_python.sh/test_runtime.sh) e o CTest que eles
+    # invocam dependem de bash (ver task-F0-7-brief.md).
+    shell: bash
+
+jobs:
+  macos:
+    name: "macOS (blocking)"
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Instalar Python >=3.11 (minimo do pyproject.toml)
+        uses: actions/setup-python@v5
+        with:
+          # pyproject.toml exige "requires-python = >=3.11". O input
+          # python-version do actions/setup-python nao aceita um range livre
+          # (">=3.11"), so uma versao concreta ou "3.x" -- 3.12 e' uma versao
+          # concreta que satisfaz esse minimo.
+          python-version: '3.12'
+
+      - name: Resolver $PYTHON para o interprete instalado
+        # scripts/test_python.sh e scripts/test_runtime.sh honram $PYTHON
+        # (prioridade maxima na descoberta de interprete, ver os proprios
+        # scripts) -- exportar aqui garante que os dois passos abaixo usam
+        # exactamente o Python que o actions/setup-python acabou de instalar,
+        # em vez de depender de descoberta automatica.
+        run: echo "PYTHON=$(python -c 'import sys; print(sys.executable)')" >> "$GITHUB_ENV"
+
+      - name: scripts/test_python.sh
+        run: bash scripts/test_python.sh
+
+      - name: scripts/test_runtime.sh (cmake configure + build + ctest)
+        run: bash scripts/test_runtime.sh
+
+      - name: Mostrar log do ctest (sempre, para leitura facil)
+        if: always()
+        run: |
+          LOG="${PS3RECOMP_BUILD_DIR:-build}/test_runtime_ctest_stdout.log"
+          if [ -f "$LOG" ]; then
+            echo "== conteudo de $LOG =="
+            cat "$LOG"
+          else
+            echo "sem log do ctest (test_runtime.sh nao chegou a essa fase)"
+          fi
+
+  linux:
+    name: "Linux (non-blocking)"
+    runs-on: ubuntu-latest
+    # NAO-BLOQUEANTE (decisao humana, ver cabecalho do ficheiro): plataforma
+    # nunca exercitada ate agora.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Instalar Python >=3.11 (minimo do pyproject.toml)
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Resolver $PYTHON para o interprete instalado
+        run: echo "PYTHON=$(python -c 'import sys; print(sys.executable)')" >> "$GITHUB_ENV"
+
+      - name: scripts/test_python.sh
+        run: bash scripts/test_python.sh
+
+      - name: scripts/test_runtime.sh (cmake configure + build + ctest)
+        # if: always() (nao continue-on-error): sem isto, uma falha no passo
+        # anterior saltaria este por omissao do GitHub Actions -- e o
+        # objectivo numa plataforma nao-bloqueante e' ver o resultado das
+        # DUAS suites, nao so a primeira que falhar. Ao contrario de
+        # continue-on-error (que marca o PASSO como sucesso mesmo falhando,
+        # mascarando o job inteiro a verde), if:always() so' garante que o
+        # passo corre -- uma falha aqui continua a fazer falhar o JOB
+        # (que so' fica verde no workflow todo gracas ao continue-on-error
+        # AO NIVEL DO JOB, la' em cima).
+        if: always()
+        run: bash scripts/test_runtime.sh
+
+      - name: Mostrar log do ctest (sempre, para leitura facil)
+        if: always()
+        run: |
+          LOG="${PS3RECOMP_BUILD_DIR:-build}/test_runtime_ctest_stdout.log"
+          if [ -f "$LOG" ]; then
+            echo "== conteudo de $LOG =="
+            cat "$LOG"
+          else
+            echo "sem log do ctest (test_runtime.sh nao chegou a essa fase)"
+          fi
+
+  windows:
+    name: "Windows (non-blocking)"
+    runs-on: windows-latest
+    # NAO-BLOQUEANTE (decisao humana, ver cabecalho do ficheiro): plataforma
+    # nunca exercitada ate agora.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Instalar Python >=3.11 (minimo do pyproject.toml)
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Resolver $PYTHON para o interprete instalado
+        run: echo "PYTHON=$(python -c 'import sys; print(sys.executable)')" >> "$GITHUB_ENV"
+
+      - name: scripts/test_python.sh
+        run: bash scripts/test_python.sh
+
+      - name: scripts/test_runtime.sh (cmake configure + build + ctest)
+        # if: always() (nao continue-on-error): ver comentario equivalente no
+        # job "linux" acima -- mesma razao, mesma correcao.
+        if: always()
+        run: bash scripts/test_runtime.sh
+
+      - name: Mostrar log do ctest (sempre, para leitura facil)
+        if: always()
+        run: |
+          LOG="${PS3RECOMP_BUILD_DIR:-build}/test_runtime_ctest_stdout.log"
+          if [ -f "$LOG" ]; then
+            echo "== conteudo de $LOG =="
+            cat "$LOG"
+          else
+            echo "sem log do ctest (test_runtime.sh nao chegou a essa fase)"
+          fi

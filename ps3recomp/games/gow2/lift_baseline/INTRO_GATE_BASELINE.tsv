@@ -1,0 +1,38 @@
+# INTRO_GATE_BASELINE.tsv -- baseline MEDIDO da intro para o portao de adopcao
+# (scripts/upstream_block_gate.sh, Fase 23 / UPST-02, marco v1.4).
+#
+# Estes numeros sao MEDIDOS por uma corrida real, nunca citados de memoria.
+# Os valores historicos conhecidos -- st620=11 na recipe de PRODUCAO com
+# Metal, e o limiar >=3 do gate antigo -- sao de OUTRAS recipes e NAO servem
+# de baseline para esta. A recipe desta medicao esta' na linha 'recipe='.
+#
+# Regenerar:
+#   scripts/upstream_block_gate.sh --congelar-baseline --ref HEAD --runs 6
+#
+# PROVENIENCIA (medida nesta corrida):
+# medido_em=2026-08-12T18:51:25Z
+# ref=HEAD (16d743361464d692832c4342c049bef95dfa332c)
+# binario_sha256=f56a62d317a82a26a834cf5da06a86304b1f714fdfb55cdaf2fcf372d30e5489
+# runs=6
+# timeout_s=25
+# recipe=PS3_NO_RSX=1 PS3_RSX_BACKEND=trace PS3_PERF_FSM=1 PS3_MOVIE_EOS=0 (PS3_TRACE_* removidos; PS3_MOVIE_DONE_MS e PS3_VDEC_FORCE_SEQDONE_MS unset; cwd=GAME_ROOT; EBOOT.ELF)
+#
+# ambiente do host: SDKROOT=/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk
+#
+# st620 por corrida desta medicao: 11,11,11,11,11,11
+# rc por corrida desta medicao:    143,143,143,143,143,143
+# classe por corrida:              timeout-normal,timeout-normal,timeout-normal,timeout-normal,timeout-normal,timeout-normal
+#
+# known_debt_python: as duas falhas de toolchain do scripts/test_python.sh
+# ('string.h' file not found / COMPILE FAILED do harness). Sao divida
+# DECLARADA desde antes desta fase -- registadas em .planning/phases/
+# 22-a-que-mede-o-que-o-upstream-avancou-e-nos-nao-temos/deferred-items.md,
+# provadas pre-existentes num worktree destacado. O portao NUNCA as pode
+# ler como regressao causada por um bloco.
+chave	valor
+st620_min	11
+st620_mediana	11
+ok_runs_min	6
+runs	6
+timeout_s	25
+known_debt_python	tools/test_ppu_lift.py,runtime/ppu/tests/test_ppu_lifter_emit.py

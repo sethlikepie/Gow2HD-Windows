@@ -1,0 +1,63 @@
+# pyproject.toml — configuração mínima de Python do ps3recomp (task F0-2)
+#
+# Este repositório NÃO é instalável como package Python: é uma toolchain de
+# scripts standalone em tools/ (cada um com o seu próprio __main__/argparse,
+# sem um pacote importável tipo "import ps3recomp") mais um runtime C/C++
+# (runtime/, libs/) e o porte activo do GoW2 (games/gow2/, git subtree com
+# ciclo de vida e CLAUDE.md próprios). Por isso este ficheiro NÃO declara
+# [build-system]: inventar um layout de package (src/, wheel, `pip install .`)
+# não corresponde à realidade do código e o próprio brief da task F0-2 pede
+# para evitar isso quando não faz sentido.
+#
+# Fonte de verdade: este ficheiro, para a versão mínima de Python e para as
+# dependências de terceiros realmente medidas (ver [project.optional-
+# dependencies] abaixo). `tools/requirements.txt` e `requirements.txt` (raiz)
+# ficam documentados como legado — cada um explica, pacote a pacote, o que é
+# medido e o que é mantido só por compatibilidade retroativa de
+# `pip install -r`. Ver o relatório da task F0-2
+# (.superpowers/sdd/task-F0-2-report.md) para os comandos de grep e a
+# saída real usados para chegar a estas conclusões.
+#
+# Como correr os testes Python hoje (NÃO são pytest — são scripts com
+# `if __name__ == "__main__":`, cada um corrido individualmente):
+#   python3.11 tools/test_audit_fallthrough.py
+#   python3.11 tools/test_find_functions_prologue_corroboration.py
+#   python3.11 tools/test_objdump_audit.py
+#   python3.11 tools/test_ppu_lift.py            # FAIL fora do Windows: chama `cmd /c` para invocar o MSVC (ver docs/BASELINE_FASE0.md §2.1); não corrigido nesta task
+#   python3.11 tools/test_recomp_config.py
+# Não há suite pytest nem runner agregador nesta task — isso é a F0-6.
+
+[project]
+name = "ps3recomp"
+version = "0.1.0"
+description = "Recompilador estático PS3 -> Windows/macOS/Linux (toolchain Python em tools/ + runtime C/C++); porte activo: God of War II HD (games/gow2/)."
+requires-python = ">=3.11"
+
+[project.optional-dependencies]
+# Medido em 2026-07-24 (task F0-2) por grep de todos os `import`/`from ... import`
+# de topo em tools/*.py, incluindo os 5 self-tests tools/test_*.py:
+#
+#   grep -hnE '^\s*(import|from)\s+[A-Za-z_][A-Za-z0-9_.]*' tools/*.py
+#
+# Resultado: NENHUM ficheiro em tools/*.py importa hoje um pacote de
+# terceiros instalável via pip. Os únicos imports "exóticos" encontrados são:
+#   - `tomllib`/`tomli` em tools/recomp_config.py (fallback try/except) —
+#     `tomllib` é stdlib a partir do Python 3.11 (o mínimo oficial acima),
+#     por isso deixou de ser preciso `tomli` (decisão já tomada: elevar o
+#     mínimo em vez de adicionar um shim de compatibilidade 3.9/3.10).
+#   - `elf_symbols` em tools/lift_selftest.py — módulo local em falta neste
+#     fork (gap de integração upstream já documentado em
+#     docs/BASELINE_FASE0.md §2.2), não é um pacote de terceiros.
+#   - `idapro`/`ida_funcs`/`ida_auto`/`idautils` em tools/ida_analyze.py —
+#     vêm do interpretador Python embutido do IDA Pro (idalib), não são
+#     pacotes PyPI e não podem ser `pip install`ados; ficam de fora.
+#
+# tools/requirements.txt (pré-existente) listava também pycryptodome,
+# capstone, construct, tabulate e tqdm: confirmado por grep que nenhum
+# destes é importado em tools/*.py. `pycryptodome` (via
+# `from Crypto.Cipher import AES`) TEM um consumidor real no monorepo —
+# games/gow2/extract_pkg.py — mas esse ficheiro pertence ao subtree do
+# porte GoW2 (repo e ciclo de vida próprios, ver games/gow2/CLAUDE.md),
+# fora do escopo desta task (tools/*.py + testes). Por isso não entra aqui;
+# ver a anotação por pacote em tools/requirements.txt.
+dev = []

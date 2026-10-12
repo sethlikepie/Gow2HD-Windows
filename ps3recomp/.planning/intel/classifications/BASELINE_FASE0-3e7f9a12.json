@@ -1,0 +1,13 @@
+{
+  "source_path": "/Users/andrebrumcortezferreira/Documents/PESSOAL/ps3recomp/docs/BASELINE_FASE0.md",
+  "type": "DOC",
+  "confidence": "high",
+  "manifest_override": true,
+  "title": "BASELINE_FASE0.md — Estado do repositório antes da Fase 0",
+  "summary": "Audit report measuring repository state (file counts, lines, layer structure) before Fase 0, produced by task F0-1.",
+  "scope": ["repository baseline", "Fase 0", "audit", "runtime layer", "libs layer", "tools layer", "games/gow2 layer"],
+  "cross_refs": ["docs/IMPLEMENTATION_PLAN_RECOMP_RELIABILITY.md"],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

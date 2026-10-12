@@ -1,0 +1,13 @@
+{
+  "source_path": "/Users/andrebrumcortezferreira/Documents/PESSOAL/ps3recomp/docs/PPU_RECOMP.md",
+  "type": "DOC",
+  "confidence": "high",
+  "manifest_override": true,
+  "title": "PPU Static Recompilation — loader, ISA, HLE, boot",
+  "summary": "Describes the PPU static recompilation pipeline: loader, disassembler, lifter, and HLE runtime turning PS3 PowerPC code into native executables.",
+  "scope": ["PPU recompiler", "ppu_loader", "ppu_disasm", "ppu_lifter", "OPD function table", "firmware imports", "HLE runtime"],
+  "cross_refs": [],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

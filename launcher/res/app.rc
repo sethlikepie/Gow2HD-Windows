@@ -1,0 +1,38 @@
+#include <winres.h>
+
+1 ICON "app.ico"
+1 24 "app.manifest"
+
+// Build scripts (zip) are added by build.cmd as SCRIPTS RCDATA through a generated scripts.rc.
+#ifdef WITH_SCRIPTS
+#include "scripts.rc"
+#endif
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 0,1,0,0
+ PRODUCTVERSION 0,1,0,0
+ FILEFLAGSMASK 0x3fL
+ FILEFLAGS 0x0L
+ FILEOS 0x40004L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "CompanyName", "sethlikepie"
+            VALUE "FileDescription", "Gow2HD-Windows launcher (builds the port from your own copy)"
+            VALUE "FileVersion", "0.1.0"
+            VALUE "InternalName", "Gow2HD-Windows"
+            VALUE "LegalCopyright", "MIT. Not affiliated with Sony Interactive Entertainment."
+            VALUE "OriginalFilename", "Gow2HD-Windows.exe"
+            VALUE "ProductName", "Gow2HD-Windows"
+            VALUE "ProductVersion", "0.1.0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END

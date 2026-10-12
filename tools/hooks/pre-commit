@@ -1,0 +1,4 @@
+#!/bin/sh
+# Refuse commits that contain game data, logs or personal paths. Install:
+#   copy tools\hooks\pre-commit .git\hooks\pre-commit
+exec python "$(git rev-parse --show-toplevel)/tools/check_no_game_data.py"

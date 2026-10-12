@@ -1,0 +1,164 @@
+# Manifest de ingest para /gsd-ingest-docs — ps3recomp / GoW2
+#
+# Motivo de existir: a descoberta por convenção de diretório encontra 386
+# arquivos (247 deles em .claude/worktrees/, worktrees obsoletas de agentes) e
+# tipa como ADR qualquer arquivo com prefixo de data NNNN-, o que faria planos
+# já executados — e alguns refutados — entrarem com a precedência MAIS ALTA do
+# motor de conflito. Este manifest fixa escopo e tipo explicitamente.
+#
+# Precedência do motor: ADR > SPEC > PRD > DOC
+#   ADR  — decisão de arquitetura travada
+#   SPEC — contrato de design técnico
+#   PRD  — escopo / roadmap / o que construir
+#   DOC  — referência descritiva do que existe
+#
+# 44 documentos. Exclusões deliberadas registradas no fim deste arquivo.
+
+docs:
+  # ─────────────────────────────────────────────────────────────────────
+  # ADR — decisões de arquitetura travadas (3)
+  #
+  # Correção pós-classificação: NID_SYSTEM.md e RECOMP_CONFIG.md estavam
+  # aqui na primeira passada. Os classifiers respeitaram o override mas
+  # registraram que os sinais de conteúdo apontam DOC — são referência
+  # técnica sem seções Context/Decision/Consequences e sem campo de status
+  # (RECOMP_CONFIG é explicitamente um stub work-in-progress). Rebaixados
+  # para DOC e reclassificados.
+  # ─────────────────────────────────────────────────────────────────────
+  - path: docs/ARCHITECTURE.md
+    type: ADR
+  - path: docs/PLATFORM_ABSTRACTION.md
+    type: ADR
+  - path: docs/RPCS3_AS_REFERENCE.md
+    type: ADR
+
+  # ─────────────────────────────────────────────────────────────────────
+  # SPEC — contratos de design técnico (1)
+  # ─────────────────────────────────────────────────────────────────────
+  - path: docs/superpowers/specs/2026-07-25-fase1-desmascarar-memoria-design.md
+    type: SPEC
+
+  # ─────────────────────────────────────────────────────────────────────
+  # PRD — escopo, roadmap e trabalho em aberto (16)
+  # ─────────────────────────────────────────────────────────────────────
+  # Índices mestres: é aqui que mora o roadmap de fato.
+  - path: docs/superpowers/plans/2026-07-23-00-gow2-playable-master-INDEX.md
+    type: PRD
+  - path: docs/superpowers/plans/2026-07-20-00-wall-chain-INDEX.md
+    type: PRD
+  - path: docs/superpowers/plans/2026-07-21-00-macos-metal-stack-INDEX.md
+    type: PRD
+  - path: docs/superpowers/plans/2026-07-21-00-macos-metal-pending-backlog.md
+    type: PRD
+  # Trabalho corrente / em aberto.
+  - path: docs/superpowers/plans/2026-07-25-00-rdy0-desbloquear-relift.md
+    type: PRD
+  - path: docs/superpowers/plans/2026-07-25-fase1-desmascarar-memoria.md
+    type: PRD
+  - path: docs/superpowers/plans/2026-07-24-bringup-instrumentacao-fase0.md
+    type: PRD
+  - path: docs/superpowers/plans/2026-07-23-menu-type15-frame-loop.md
+    type: PRD
+  - path: docs/superpowers/plans/2026-07-23-m3plus-postwad-present.md
+    type: PRD
+  - path: docs/superpowers/plans/2026-07-23-xenonrecomp-lessons-recomp-tooling.md
+    type: PRD
+  - path: docs/superpowers/plans/2026-07-21-shader-registry-typemap-walk.md
+    type: PRD
+  # Planos de escopo do motor.
+  - path: docs/MACOS_PORT_PLAN.md
+    type: PRD
+  - path: docs/IMPLEMENTATION_PLAN_GAME_RUNTIME_BRINGUP.md
+    type: PRD
+  - path: docs/IMPLEMENTATION_PLAN_RECOMP_RELIABILITY.md
+    type: PRD
+  - path: docs/PLAN_READY_FOR_GAME_RECOMPILATION.md
+    type: PRD
+  - path: docs/SPURS_BRINGUP.md
+    type: PRD
+
+  # ─────────────────────────────────────────────────────────────────────
+  # DOC — referência descritiva (24)
+  # ─────────────────────────────────────────────────────────────────────
+  # Rebaixados de ADR após o veredito dos classifiers (ver nota acima).
+  - path: docs/NID_SYSTEM.md
+    type: DOC
+  - path: docs/RECOMP_CONFIG.md
+    type: DOC
+  # Subsistemas do motor.
+  - path: docs/PPU_RECOMP.md
+    type: DOC
+  - path: docs/SPU_LIFTER.md
+    type: DOC
+  - path: docs/SPU_FALLBACK.md
+    type: DOC
+  - path: docs/RSX_GRAPHICS.md
+    type: DOC
+  - path: docs/RSX_FRAGMENT_PROGRAM.md
+    type: DOC
+  - path: docs/SYSCALLS.md
+    type: DOC
+  - path: docs/RUNTIME.md
+    type: DOC
+  - path: docs/MODULES_REFERENCE.md
+    type: DOC
+  - path: docs/MODULE_STATUS.md
+    type: DOC
+  - path: docs/TOOLS.md
+    type: DOC
+  - path: docs/CUSTOM_MODULES.md
+    type: DOC
+  # Uso e onboarding humano.
+  - path: docs/BUILDING.md
+    type: DOC
+  - path: docs/GETTING_STARTED.md
+    type: DOC
+  - path: docs/GAME_PORTING_GUIDE.md
+    type: DOC
+  - path: docs/FAQ.md
+    type: DOC
+  # Estado factual do port GoW2 — evidência medida, não intenção.
+  - path: docs/GOW2_BOOT_STATE.md
+    type: DOC
+  - path: docs/gow2-asset-pipeline-map.md
+    type: DOC
+  - path: docs/gow2-recomp-notes.md
+    type: DOC
+  - path: docs/BASELINE_FASE0.md
+    type: DOC
+  - path: docs/bringup/gow2/FASE0/attempt-1.md
+    type: DOC
+  - path: docs/bringup/gow2/FASE1/attempt-1.md
+    type: DOC
+  - path: docs/bringup/gow2/FASE1/mascaras-e1-e2.md
+    type: DOC
+
+# ─────────────────────────────────────────────────────────────────────────
+# EXCLUSÕES DELIBERADAS — registradas para não parecerem cobertura silenciosa
+# ─────────────────────────────────────────────────────────────────────────
+#
+# .claude/worktrees/agent-*/docs/**  (247)
+#   Worktrees obsoletas de execuções de agente; cópias do próprio repo.
+#
+# docs/superpowers/plans/2026-07-14-*, 2026-07-20-01..05, -fios-async-read,
+# -gow2-full-bringup, -macos-intro-audio-open-wall, -macos-movie-eos-fsm,
+# -macos-post-st3-smpd-wad, 2026-07-21-intro-vdec-open-force-wad,
+# 2026-07-21-shader-combination-zeroed  (~14)
+#   Planos já executados de levas anteriores. O resultado deles já está
+#   refletido nos índices mestres e no estado medido de GOW2_BOOT_STATE.md /
+#   gow2-asset-pipeline-map.md. Ingeri-los reintroduziria intenções antigas
+#   competindo com o estado atual.
+#
+# docs/superpowers/plans/2026-07-21-macos-metal-{m0..m10 individuais}  (11)
+#   Cobertos pelo INDEX do stack Metal e pelo backlog pendente.
+#
+# docs/notes/2026-07-21-macos-metal-*  (9)
+#   Notas de resultado por task M*; o backlog pendente já consolida o status.
+#
+# games/gow2/notes/**  (58)
+#   Diário de sessão do port. Excede o cap sozinho e é registro cronológico,
+#   não decisão. Candidato a um ingest separado se houver necessidade.
+#
+# docs/broad-testing-findings.md, docs/drill-down-3d-stardust.md,
+# docs/drill-down-psn.md  (3)
+#   Caracterização de outros títulos PS3, fora do escopo do port GoW2.

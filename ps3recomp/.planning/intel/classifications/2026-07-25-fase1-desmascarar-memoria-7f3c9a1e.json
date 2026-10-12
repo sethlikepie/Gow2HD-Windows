@@ -1,0 +1,13 @@
+{
+  "source_path": "/Users/andrebrumcortezferreira/Documents/PESSOAL/ps3recomp/docs/superpowers/plans/2026-07-25-fase1-desmascarar-memoria.md",
+  "type": "PRD",
+  "confidence": "high",
+  "manifest_override": true,
+  "title": "Fase 1 (1º entregável) — Desmascarar a memória guest: plano de implementação",
+  "summary": "Implementation plan to measure and stop the engine's always-on memory masks from swallowing guest heap data and to fix region-map reporting bugs.",
+  "scope": ["ps3_mask_trace", "vm.h region map", "sys_memory swallowed masks", "sys_mmapper_allocate_address", "ppu_loader.cpp", "macOS/arm64 runtime"],
+  "cross_refs": ["../specs/2026-07-25-fase1-desmascarar-memoria-design.md"],
+  "locked": false,
+  "precedence": null,
+  "notes": "Task-based implementation plan with global constraints (G1-G8) and checkbox-tracked tasks; in-flight work paired with SPEC docs/superpowers/specs/2026-07-25-fase1-desmascarar-memoria-design.md. MANIFEST_TYPE=PRD applied per instruction, overriding the plan/task-list heuristic signal."
+}

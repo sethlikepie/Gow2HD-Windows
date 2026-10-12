@@ -1,0 +1,13 @@
+{
+  "source_path": "/Users/andrebrumcortezferreira/Documents/PESSOAL/ps3recomp/docs/superpowers/plans/2026-07-23-xenonrecomp-lessons-recomp-tooling.md",
+  "type": "PRD",
+  "confidence": "high",
+  "manifest_override": true,
+  "title": "XenonRecomp Lessons → ps3recomp Tooling Implementation Plan",
+  "summary": "Plan to import XenonRecomp patterns (TOML config, mid-asm hooks, jump-table analysis, weak overrides, ABI opts, SIMDe) into ps3recomp without breaking GoW2 bring-up.",
+  "scope": ["ppu_lifter.py", "spu_lifter.py", "recomp_config.py", "mid-asm hooks", "jump-table analysis", "weak function overrides", "ABI opts", "SIMDe", "GoW2 smoke tests"],
+  "cross_refs": ["docs/PPU_RECOMP.md", "docs/RECOMP_CONFIG.md", "gow2-recomp/recomp_mid_v2/patch_*.py", "tools/ppu_lifter.py"],
+  "locked": false,
+  "precedence": null,
+  "notes": "MANIFEST_TYPE=PRD applied per instructions, overriding heuristic ADR-plan-doc leanings. Phase-based task plan with checkboxes; Phase A/B contain some completed ([x]) steps (jump table TOML loading, invalid-skip wiring) while other phases (C-F) appear not started based on scanned section."
+}

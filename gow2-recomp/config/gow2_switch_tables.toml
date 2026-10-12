@@ -1,0 +1,152 @@
+# gow2_switch_tables.toml -- [[switch_table]] declaradas do GoW2 (NPUA80491)
+#
+# Consumido por tools/recomp_config.py::load_switch_tables, apontado pela chave
+# [main].switch_table_file do gow2_recomp.toml (ao lado deste ficheiro), e
+# fundido com ppu_lifter.discover_jump_tables por merge_switch_tables --
+# CONFIG GANHA no conflito: um `dispatch` declarado aqui SUBSTITUI o que a
+# descoberta encontrou, nao se une a ele.
+#
+# `dispatch` e' o EA do proprio `bctr`, NAO o da funcao nem o do `mtctr`
+# anterior -- e' por esse EA que o ppu_lifter chaveia (self.jump_tables.get(
+# insn.addr) com insn == bctr). ARMADILHA MEDIDA (18-01): os EAs do ledger
+# PATCH_MIGRATION.tsv (0x002A209C, 0x002B11B8) sao os das FUNCOES; usa-los aqui
+# produziria uma declaracao que o lifter aceita e nunca usa.
+#
+# GERADO (nao editar a mao -- regenerar):
+#   .venv/bin/python3 tools/ps3_analyse.py ../gow2-recomp/EBOOT.ELF \
+#       --functions ../gow2-recomp/functions.json -o /tmp/gow2_jt_high.toml
+# O EBOOT.ELF e o functions.json sao dados do jogo e NUNCA se commitam; deste
+# ficheiro so' saem ENDERECOS derivados, nunca conteudo do binario.
+#
+# POLITICA DE CONTEUDO: so' entram tabelas `high` E revistas por um humano.
+# As `low` (14, exigem --include-low) NUNCA entram sem revisao caso a caso e
+# razao escrita por tabela -- uma jump table errada nao e' um teste que falha,
+# e' o boot a saltar para lixo.
+#
+# ---------------------------------------------------------------------------
+# PORQUE SO' DUAS, E NAO AS 143 `high` -- medido em 2026-08-02 (plano 18-02)
+# ---------------------------------------------------------------------------
+# Correndo o ps3_analyse e o discover_jump_tables do lifter sobre a MESMA
+# imagem e com a mesma assinatura, as 143 tabelas `high` sao IDENTICAS, alvo a
+# alvo, as que a descoberta ja' produz sozinha (143 identicas, 0 diferentes,
+# 0 so' num dos lados; a descoberta da' 157 = as 143 high + as 14 low).
+# Declarar qualquer uma delas e', HOJE, um no-op: o merge substitui a entrada da
+# descoberta por outra igual. Nao ha' portanto ganho funcional em despejar as
+# 143 -- e havia custo: seriam 141 tabelas que ninguem reviu a entrar num
+# ficheiro de producao sob a etiqueta "revisto".
+#
+# Estas DUAS entram porque sao as unicas com uma terceira fonte independente:
+# os patches historicos patch_jumptable_2a209c.py e patch_jumptable_2b11b8.py,
+# escritos a mao a partir do lift, cujas tabelas (base 0x002A2134 + 58 offsets
+# e base 0x002B1228 + 28 offsets) dao IGUALDADE EXACTA de conjuntos de alvos
+# com o que o detector achou -- 54/54 e 22/22 alvos distintos. Concordancia de
+# tres analises independentes e' prova; as outras 141 tem duas.
+#
+# O QUE ISTO VALE HOJE: nada em comportamento -- e esta' dito de proposito, em
+# vez de se apresentar a declaracao como se resolvesse algo. O que vale e' ser
+# rede: o discover_jump_tables ja' esteve MORTO em HEAD (TypeError/NameError
+# apanhados por um try/except que so' imprimia em stderr -> zero jump tables em
+# QUALQUER lift, em silencio; ver o docstring da funcao). Declaradas aqui,
+# estas duas sobrevivem a uma regressao dessas.
+#
+# Aceites do ledger cobertos por estas duas (P0):
+#   grep:case 0x002A27BCu: goto loc_002A27BC;   (0x002A2134 + 0x688)
+#   grep:case 0x002B12C4u: goto loc_002B12C4;   (0x002B1228 + 0x09C)
+# NOTA: em 2026-08-02 estes dois greps ja' passam num re-lift limpo SEM patch e
+# SEM este ficheiro -- a descoberta chega la' sozinha. A classificacao formal
+# (`redundant` vs `migrated`) dos dois patches e' trabalho do plano 18-03.
+#
+# `confidence` fica no ficheiro: e' metadado do analisador que o parser IGNORA
+# (verificado em 18-01), e e' o que permite a revisao humana do TOML.
+
+# mtctr@0x002A212C terminal=bctr base=0x002A2134 modo=offsets bound=57 idx_escalado=True
+[[switch_table]]
+dispatch = 0x002A2130
+default = "indirect"
+confidence = "high"
+cases = [
+  0x002A221C,
+  0x002A235C,
+  0x002A23DC,
+  0x002A2454,
+  0x002A24C8,
+  0x002A2534,
+  0x002A2590,
+  0x002A25FC,
+  0x002A2658,
+  0x002A26C8,
+  0x002A2740,
+  0x002A27BC,
+  0x002A282C,
+  0x002A28B4,
+  0x002A28E8,
+  0x002A294C,
+  0x002A29C0,
+  0x002A2A10,
+  0x002A2A6C,
+  0x002A2AC8,
+  0x002A2B28,
+  0x002A2B80,
+  0x002A2BA8,
+  0x002A2BE4,
+  0x002A2C3C,
+  0x002A2CA8,
+  0x002A2CF8,
+  0x002A2D44,
+  0x002A2DA4,
+  0x002A2E2C,
+  0x002A2EA8,
+  0x002A2F30,
+  0x002A2FA8,
+  0x002A3018,
+  0x002A307C,
+  0x002A30D8,
+  0x002A3140,
+  0x002A319C,
+  0x002A31F8,
+  0x002A3260,
+  0x002A329C,
+  0x002A32EC,
+  0x002A330C,
+  0x002A3348,
+  0x002A33A0,
+  0x002A33FC,
+  0x002A341C,
+  0x002A343C,
+  0x002A34A8,
+  0x002A34F4,
+  0x002A3540,
+  0x002A35AC,
+  0x002A35F8,
+  0x002A3648,
+]
+
+# mtctr@0x002B1220 terminal=bctr base=0x002B1228 modo=offsets bound=27 idx_escalado=True
+[[switch_table]]
+dispatch = 0x002B1224
+default = "indirect"
+confidence = "high"
+cases = [
+  0x002B1298,
+  0x002B12C4,
+  0x002B130C,
+  0x002B133C,
+  0x002B136C,
+  0x002B157C,
+  0x002B15AC,
+  0x002B165C,
+  0x002B1860,
+  0x002B1A64,
+  0x002B1A94,
+  0x002B1CA4,
+  0x002B1D44,
+  0x002B1DF0,
+  0x002B1E20,
+  0x002B1E50,
+  0x002B1E80,
+  0x002B1EB0,
+  0x002B1EE0,
+  0x002B1F10,
+  0x002B1F40,
+  0x002B2170,
+]

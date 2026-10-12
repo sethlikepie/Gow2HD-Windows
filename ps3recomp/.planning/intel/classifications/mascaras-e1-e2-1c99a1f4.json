@@ -1,0 +1,13 @@
+{
+  "source_path": "/Users/andrebrumcortezferreira/Documents/PESSOAL/ps3recomp/docs/bringup/gow2/FASE1/mascaras-e1-e2.md",
+  "type": "DOC",
+  "confidence": "high",
+  "manifest_override": true,
+  "title": "Fase 1 — Experimentos E1/E2: o que cada máscara engole e o que muda sem ela",
+  "summary": "Reports results of E1/E2 experiments measuring guest-memory masking (ps3_mask_trace, vm_uncommitted_guard, tblsize_guard) during GoW2 boot runs.",
+  "scope": ["ps3_mask_trace", "vm_uncommitted_guard", "tblsize_guard", "sys_memory.c", "vm.h", "boot_gow2", "memory masking"],
+  "cross_refs": ["2026-07-25-fase1-desmascarar-memoria"],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

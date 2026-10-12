@@ -1,0 +1,13 @@
+{
+  "source_path": "/Users/andrebrumcortezferreira/Documents/PESSOAL/ps3recomp/docs/FAQ.md",
+  "type": "DOC",
+  "confidence": "high",
+  "manifest_override": true,
+  "title": "Frequently Asked Questions",
+  "summary": "FAQ explaining what ps3recomp is, how it differs from RPCS3, legality, supported games/platforms, and how static recompilation works.",
+  "scope": ["ps3recomp", "static recompilation", "RPCS3", "PowerPC lifting", "SPU handling", "supported platforms", "flOw port"],
+  "cross_refs": ["RPCS3_AS_REFERENCE.md", "GAME_PORTING_GUIDE.md#case-study-flow"],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

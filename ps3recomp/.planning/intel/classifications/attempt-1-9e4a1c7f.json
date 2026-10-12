@@ -1,0 +1,19 @@
+{
+  "source_path": "/Users/andrebrumcortezferreira/Documents/PESSOAL/ps3recomp/docs/bringup/gow2/FASE0/attempt-1.md",
+  "type": "DOC",
+  "confidence": "high",
+  "manifest_override": true,
+  "title": "Checkpoint: FASE 0 — Baseline do jogo recompilado (gow2, NPUA80491)",
+  "summary": "Bring-up checkpoint recording the first formal Phase 0 baseline run of boot_gow2, with hypothesis, tests, and evidence, no code changes.",
+  "scope": ["FASE 0 baseline", "boot_gow2", "trace_parse", "baseline_report", "NPUA80491"],
+  "cross_refs": [
+    "docs/bringup/gow2/FASE0/baseline.json",
+    "docs/IMPLEMENTATION_PLAN_GAME_RUNTIME_BRINGUP.md",
+    "tools/trace_parse.py",
+    "tools/baseline_report.py",
+    "scripts/baseline_run.sh"
+  ],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

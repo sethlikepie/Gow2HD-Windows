@@ -1,0 +1,25 @@
+{
+  "source_path": "/Users/andrebrumcortezferreira/Documents/PESSOAL/ps3recomp/docs/SPU_LIFTER.md",
+  "type": "DOC",
+  "confidence": "high",
+  "manifest_override": true,
+  "title": "SPU → C Lifter — Status & TODO",
+  "summary": "Status and TODO tracker for tools/spu_lifter.py, the SPU-to-C translator complementing the PPU fallback registry approach.",
+  "scope": [
+    "spu_lifter.py",
+    "spu_disasm.py",
+    "SPU instruction coverage",
+    "runtime/spu/spu_channels.c",
+    "SPU ABI / calling convention",
+    "spu_helpers.h unit tests",
+    "extract_spu_images.py",
+    "find_spu_functions.py",
+    "SPU tracing vs RPCS3",
+    "CMake build integration",
+    "runtime/spu/tests integration suite"
+  ],
+  "cross_refs": ["SPU_FALLBACK.md"],
+  "locked": false,
+  "precedence": null,
+  "notes": "MANIFEST_TYPE=DOC applied per instructions, heuristic/content classification skipped. Doc is a living status/TODO tracker (not ADR/PRD/SPEC) covering: (1) missing instructions remaining ('Future — not yet hit by any image'), (2) open correctness item on shlqby direction / brhz-brhnz preferred-halfword semantics, (3) unwritten RPCS3 trace-log normalizer/converter, (4) CMake wiring of spu_lifter.py alongside ppu_lifter.py still pending, (5) pending per-helper unit tests against Cell BE ISA manual vectors and diff-execution against RPCS3 SPU traces for a real SPURS job."
+}

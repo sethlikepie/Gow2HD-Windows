@@ -1,0 +1,42 @@
+# ps3recomp tools dependencies — LEGADO (task F0-2, 2026-07-24)
+#
+# A fonte de verdade da versão mínima de Python e das dependências de
+# terceiros REALMENTE usadas por tools/*.py passou a ser o pyproject.toml
+# na raiz do repositório (requires-python = ">=3.11";
+# [project.optional-dependencies].dev). Este ficheiro fica documentado como
+# legado só para não quebrar `pip install -r tools/requirements.txt`,
+# referenciado em docs/GETTING_STARTED.md, docs/RECOMP_CONFIG.md,
+# docs/TOOLS.md, docs/MACOS_PORT_PLAN.md, CONTRIBUTING.md e README.md.
+#
+# Medido em 2026-07-24 (ver .superpowers/sdd/task-F0-2-report.md para o
+# comando de grep exacto e a saída completa): NENHUM dos 5 pacotes abaixo é
+# importado por qualquer ficheiro em tools/*.py hoje (incluindo os 5
+# self-tests tools/test_*.py). Cada linha traz a anotação medida — não
+# removas pacotes silenciosamente nem adiciones novos sem grep a confirmar.
+#
+# Install with: pip install -r tools/requirements.txt
+
+# ELF/SELF decryption — NÃO importado em tools/*.py (grep 2026-07-24). Tem
+# um consumidor real no monorepo, games/gow2/extract_pkg.py
+# (`from Crypto.Cipher import AES`), mas esse ficheiro pertence ao subtree
+# do porte GoW2 (repo/ciclo de vida próprios — ver games/gow2/CLAUDE.md),
+# fora do escopo de tools/. Mantido aqui só por compatibilidade retroativa.
+pycryptodome>=3.19
+
+# PowerPC disassembly — NÃO importado em tools/*.py (grep 2026-07-24); o
+# repo usa decoders próprios (tools/ppu_disasm.py, tools/spu_disasm.py).
+capstone>=5.0
+
+# Structured binary parsing — NÃO importado em tools/*.py (grep 2026-07-24).
+construct>=2.10
+
+# Pretty CLI output — NÃO importado em tools/*.py (grep 2026-07-24).
+tabulate>=0.9
+
+# TOML config parsing — tools/recomp_config.py usa `tomllib`, que é stdlib
+# a partir do Python 3.11 (mínimo oficial do projecto, ver pyproject.toml).
+# `tomli` foi removido daqui de propósito: decisão já tomada de elevar o
+# mínimo em vez de adicionar um shim de compatibilidade 3.9/3.10.
+
+# Progress bars for long operations — NÃO importado em tools/*.py (grep 2026-07-24).
+tqdm>=4.65

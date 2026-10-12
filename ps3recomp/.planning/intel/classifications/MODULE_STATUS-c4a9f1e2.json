@@ -1,0 +1,13 @@
+{
+  "source_path": "/Users/andrebrumcortezferreira/Documents/PESSOAL/ps3recomp/docs/MODULE_STATUS.md",
+  "type": "DOC",
+  "confidence": "high",
+  "manifest_override": true,
+  "title": "PS3 HLE Module Status",
+  "summary": "Status matrix of HLE implementation coverage (Not Started/Stubbed/Partial/Complete) across PS3 system modules: core, filesystem, input, graphics, audio.",
+  "scope": ["HLE modules", "sysPrxForUser", "cellSysmodule", "sys_fs", "sys_memory", "cellGcmSys", "RSX Command Processor", "cellAudio", "cellPad", "module implementation status"],
+  "cross_refs": [],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}

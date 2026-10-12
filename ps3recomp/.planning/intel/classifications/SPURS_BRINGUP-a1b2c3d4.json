@@ -1,0 +1,13 @@
+{
+  "source_path": "/Users/andrebrumcortezferreira/Documents/PESSOAL/ps3recomp/docs/SPURS_BRINGUP.md",
+  "type": "PRD",
+  "confidence": "high",
+  "manifest_override": true,
+  "title": "SPURS bring-up — plano de execução para destravar o boot",
+  "summary": "Execution plan to implement HLE SPURS kernel scheduling so PS3 games advance past sys_event_queue_receive during boot.",
+  "scope": ["SPURS", "SPU interpreter", "cellSpursInitialize", "event queue", "workload scheduling", "GoW2 boot"],
+  "cross_refs": ["../FEASIBILITY.md"],
+  "locked": false,
+  "precedence": null,
+  "notes": ""
+}
